@@ -7,7 +7,7 @@ var bodyparser = require("body-parser");
 var session = require("express-session");
 var levelSession = require("level-session-store");
 var app = express();
-var port = process.env.PORT || '8082';
+var port = process.env.PORT || '8083';
 app.use(express.static(path.join(__dirname, '/../public')));
 app.set('views', __dirname + "/../views");
 app.set('view engine', 'ejs');
@@ -24,10 +24,7 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
-/* */
-app.get('/hello/:name', function (req, res) {
-    res.render('index.ejs', { name: req.params.name });
-});
+/*Metrics*/
 app.get('/metrics.json', function (req, res) {
     metrics_1.MetricsHandler.get(function (err, result) {
         if (err) {
@@ -84,45 +81,68 @@ app.delete('/metrics/:id', function (req, res) {
 var users_1 = require("./users");
 var dbUser = new users_1.UserHandler('./db/users');
 var authRouter = express.Router();
+//Login page
 authRouter.get('/login', function (req, res) {
     res.render('login');
 });
+//Inscription page
 authRouter.get('/signup', function (req, res) {
     res.render('signup');
 });
-authRouter.get('/logout', function (req, res) {
-    delete req.session.loggedIn;
-    delete req.session.user;
-    res.redirect('/login');
-});
+//Get infos of a user for login
 app.post('/login', function (req, res, next) {
     dbUser.get(req.body.username, function (err, result) {
         if (err)
             next(err);
         if (result === undefined || !result.validatePassword(req.body.password)) {
+            console.log('test');
             res.redirect('/login');
         }
         else {
+            console.log(result);
             req.session.loggedIn = true;
             req.session.user = result;
             res.redirect('/');
         }
     });
 });
-app.post('/signup', function (req, res, next) {
-    dbUser.get(req.body.username, function (err, result) {
+//Save infos of a user for inscription
+app.post('/signup', function (req, res) {
+    var user = new users_1.User(req.body.username, req.body.email, req.body.password);
+    dbUser.save(user, function (err) {
         if (err)
-            next(err);
-        if (result === undefined || !result.validatePassword(req.body.password)) {
-            res.redirect('/signup');
-        }
-        else {
-            req.session.loggedIn = true;
-            req.session.user = result;
-            res.redirect('/');
-        }
+            throw err;
+        res.status(200).send('saved');
+        console.log(user);
+        console.log('test');
     });
 });
+//Logout
+authRouter.get('/logout', function (req, res) {
+    delete req.session.loggedIn;
+    delete req.session.user;
+    res.redirect('/login');
+});
+/*
+app.post('/signup', (req: any, res: any, next: any) => {
+  
+    dbUser.save(req.body.username, (err: Error | null, result?: User) => {
+      if (err) next(err)
+      if (result === undefined || !result.validatePassword(req.body.password)) {
+        console.log(result)
+        console.log('test')
+        res.redirect('/signup')
+
+      } else {
+        console.log(result)
+        console.log('test')
+        req.session.loggedIn = true
+        req.session.user = result
+        res.redirect('/')
+      }
+    })
+  })
+  */
 app.use(authRouter);
 var userRouter = express.Router();
 userRouter.post('/', function (req, res, next) {
@@ -140,7 +160,8 @@ userRouter.post('/', function (req, res, next) {
         }
     });
 });
-userRouter.get('/:username', function (req, res, next) {
+//Get a user
+app.get('/users/:username', function (req, res, next) {
     dbUser.get(req.params.username, function (err, result) {
         if (err || result === undefined) {
             res.status(404).send("user not found");
@@ -158,7 +179,7 @@ var authCheck = function (req, res, next) {
         res.redirect('/login');
 };
 app.get('/', authCheck, function (req, res) {
-    res.render('index', { name: req.session.username });
+    res.render('home', { name: req.session.username });
 });
 /* SERVER*/
 app.listen(port, function (err) {

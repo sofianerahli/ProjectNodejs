@@ -6,7 +6,7 @@ import session = require('express-session')
 import levelSession = require('level-session-store')
 
 const app = express()
-const port: string = process.env.PORT || '8082'
+const port: string = process.env.PORT || '8083'
 app.use(express.static(path.join(__dirname, '/../public')))
 
 app.set('views', __dirname + "/../views")
@@ -28,12 +28,8 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }))
-/* */
 
-app.get('/hello/:name', (req: any, res: any) => {
-  res.render('index.ejs', {name: req.params.name})
-})
-
+/*Metrics*/ 
 app.get('/metrics.json', (req: any, res: any) => {
   MetricsHandler.get((err: Error | null, result?: any) => {
     if (err) {
@@ -90,34 +86,33 @@ app.delete('/metrics/:id', (req: any, res: any) => {
     
   })
 })
+
+
+
 /*USER*/ 
 import { UserHandler, User } from './users'
 const dbUser: UserHandler = new UserHandler('./db/users')
 const authRouter = express.Router()
 
-
-
+//Login page
 authRouter.get('/login', (req: any, res: any) => {
   res.render('login')
 })
 
+//Inscription page
 authRouter.get('/signup', (req: any, res: any) => {
   res.render('signup')
 })
 
-
-authRouter.get('/logout', (req: any, res: any) => {
-  delete req.session.loggedIn
-  delete req.session.user
-  res.redirect('/login')
-})
+//Get infos of a user for login
 app.post('/login', (req: any, res: any, next: any) => {
   dbUser.get(req.body.username, (err: Error | null, result?: User) => {
     if (err) next(err)
-    if (result === undefined || !result.validatePassword(req.body.password)) {
-      
+    if (result === undefined || !result.validatePassword(req.body.password)) { 
+      console.log('test') 
       res.redirect('/login')
     } else {
+      console.log(result) 
       req.session.loggedIn = true
       req.session.user = result
       res.redirect('/')
@@ -125,23 +120,51 @@ app.post('/login', (req: any, res: any, next: any) => {
   })
 })
 
+//Save infos of a user for inscription
+app.post('/signup', (req: any, res: any) => {
+  let user: User= new User(req.body.username,req.body.email,req.body.password)
+  dbUser.save(user, (err: Error | null) => {
+    if (err) throw err
+    res.status(200).send('saved')
+    console.log(user) 
+    console.log('test') 
+  })
+})
+
+//Logout
+authRouter.get('/logout', (req: any, res: any) => {
+  delete req.session.loggedIn
+  delete req.session.user
+  res.redirect('/login')
+})
+
+
+
+/*
 app.post('/signup', (req: any, res: any, next: any) => {
-    dbUser.get(req.body.username, (err: Error | null, result?: User) => {
+  
+    dbUser.save(req.body.username, (err: Error | null, result?: User) => {
       if (err) next(err)
-      if (result === undefined || !result.validatePassword(req.body.password)) {
-        
+      if (result === undefined || !result.validatePassword(req.body.password)) {  
+        console.log(result) 
+        console.log('test') 
         res.redirect('/signup')
+
       } else {
+        console.log(result) 
+        console.log('test') 
         req.session.loggedIn = true
         req.session.user = result
         res.redirect('/')
       }
     })
   })
+  */
 
 app.use(authRouter)
 
 const userRouter = express.Router()
+
 
 userRouter.post('/', (req: any, res: any, next: any) => {
   dbUser.get(req.body.username, function (err: Error | null, result?: User) {
@@ -156,7 +179,8 @@ userRouter.post('/', (req: any, res: any, next: any) => {
   })
 })
 
-userRouter.get('/:username', (req: any, res: any, next: any) => {
+//Get a user
+app.get('/users/:username', (req: any, res: any, next: any) => {
   dbUser.get(req.params.username, function (err: Error | null, result?: User) {
     if (err || result === undefined) {
       res.status(404).send("user not found")
@@ -166,7 +190,6 @@ userRouter.get('/:username', (req: any, res: any, next: any) => {
 
 
 app.use('/user', userRouter)
-
 const authCheck = function (req: any, res: any, next: any) {
   if (req.session.loggedIn) {
     next()
@@ -174,8 +197,9 @@ const authCheck = function (req: any, res: any, next: any) {
 }
 
 app.get('/', authCheck, (req: any, res: any) => {
-  res.render('index', { name: req.session.username })
+  res.render('home', { name: req.session.username })
 })
+
 
 /* SERVER*/
 app.listen(port, (err: Error) => {

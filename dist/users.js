@@ -15,7 +15,7 @@ var UserHandler = /** @class */ (function () {
         });
     };
     UserHandler.prototype.save = function (user, callback) {
-        this.db.put("user:" + user.username, user.getPassword + ":" + user.email, function (err) {
+        this.db.put("user:" + user.username, user.password + ":" + user.email, function (err) {
             callback(err);
         });
     };
@@ -28,9 +28,9 @@ exports.UserHandler = UserHandler;
 var User = /** @class */ (function () {
     function User(username, email, password, passwordHashed) {
         if (passwordHashed === void 0) { passwordHashed = false; }
-        this.password = "";
         this.username = username;
         this.email = email;
+        this.password = password;
         if (!passwordHashed) {
             this.setPassword(password);
         }
