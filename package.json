@@ -1,0 +1,48 @@
+{
+  "name": "projectnodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./node_modules/.bin/ts-node src/server.ts",
+    "build": "./node_modules/.bin/tsc -p tsconfig.json",
+    "dev": "./node_modules/.bin/nodemon "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sofianerahli/ProjectNodejs.git"
+  },
+  "author": "sofianerahli <sofiane.rahli@edu.ece.fr>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sofianerahli/ProjectNodejs/issues"
+  },
+  "homepage": "https://github.com/sofianerahli/ProjectNodejs#readme",
+  "devDependencies": {
+    "@types/chai": "^4.2.6",
+    "@types/express": "^4.17.2",
+    "@types/levelup": "^3.1.1",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.11",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.4.1",
+    "del": "^5.1.0",
+    "ejs": "^3.0.1",
+    "encoding-down": "^6.3.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "jquery": "^3.4.1",
+    "level": "^6.0.0",
+    "level-session-store": "^2.2.0",
+    "level-ws": "^2.0.0",
+    "leveldown": "^5.4.1",
+    "levelup": "^4.3.2",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3"
+  }
+}
