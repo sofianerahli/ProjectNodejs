@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <!-- Laisons des fichiers CSS -->
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/home.css">
+    </head>
+    <body class="container">
+        <div class="jumbotron">
+        <h1 align="center">
+            My metrics
+        </h1> 
+        <button class="btn btn-danger" href="/logout" onClick='document.location.href="/logout"'>
+            Logout
+        </button>
+        <button align="center" class="btn btn-danger" href="/" onClick='document.location.href="/"'>
+            Home
+        </button>
+        </div> 
+        <button class="btn btn-primary" href="/login" onClick='document.location.href="/login"'>
+            Add a metric
+        </button>
+        <button class="btn btn-primary" href="/signup" onClick='document.location.href="/signup"'>
+            Uptade a metric
+        </button>
+        <button class="btn btn-primary" href="/signup" onClick='document.location.href="/signup"'>
+            Delete a metric
+        </button>
+        <br>
+        <div>
+            <button class="btn btn-success" id="show-metrics">
+                Bring the metrics
+            </button>
+            <div id="metrics"></div>
+        </div>
+        <script>
+            $('#show-metrics').click((e) => {
+                e.preventDefault();
+                $.getJSON("/metrics.json", {}, (data) => {
+                const content = data.map(d => {
+                    return 'timestamp: '+d.timestamp+', value: '+d.value+'';
+                })
+                $('#metrics').append(content.join("\n"));
+                });
+            })
+        </script>
+    </body>
+</html>

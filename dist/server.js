@@ -89,40 +89,69 @@ authRouter.get('/login', function (req, res) {
 authRouter.get('/signup', function (req, res) {
     res.render('signup');
 });
-//Get infos of a user for login
-app.post('/login', function (req, res, next) {
-    dbUser.get(req.body.username, function (err, result) {
-        if (err)
-            next(err);
-        if (result === undefined || !result.validatePassword(req.body.password)) {
-            console.log('test');
-            res.redirect('/login');
-        }
-        else {
-            console.log(result);
-            req.session.loggedIn = true;
-            req.session.user = result;
-            res.redirect('/');
-        }
-    });
-});
-//Save infos of a user for inscription
-app.post('/signup', function (req, res) {
-    var user = new users_1.User(req.body.username, req.body.email, req.body.password);
-    dbUser.save(user, function (err) {
-        if (err)
-            throw err;
-        res.status(200).send('saved');
-        console.log(user);
-        console.log('test');
-    });
-});
 //Logout
 authRouter.get('/logout', function (req, res) {
     delete req.session.loggedIn;
     delete req.session.user;
-    res.redirect('/login');
+    res.redirect('/');
 });
+//User Page
+authRouter.get('/userpage', function (req, res) {
+    res.render('userpage');
+});
+authRouter.post('/signup', function (req, res, next) {
+    var user = new users_1.User(req.body.username, req.body.email, req.body.password);
+    dbUser.get(req.body.username, function (err, result) {
+        if (!err || result !== undefined) {
+            console.log('user already exists');
+            res.redirect('/signup');
+        }
+        else {
+            dbUser.save(user, function (err) {
+                if (err)
+                    next(err);
+                console.log(user);
+                req.session.loggedIn = true;
+                req.session.user = result;
+                res.redirect('/userpage');
+            });
+        }
+    });
+});
+//save infos of a user for login
+authRouter.post('/login', function (req, res, next) {
+    dbUser.get(req.body.username, function (err, result) {
+        if (err)
+            next(err);
+        if (result !== undefined) {
+            if (!result.validatePassword(req.body.password)) {
+                console.log('Password false');
+                res.redirect('/login');
+            }
+            else {
+                console.log(result);
+                console.log('Connexion successful');
+                req.session.loggedIn = true;
+                req.session.user = result;
+                res.redirect('/userpage');
+            }
+        }
+        else {
+            res.redirect('/login');
+        }
+    });
+});
+//Save infos of a user for inscription
+/*app.post('/signup', (req: any, res: any) => {
+  let user: User= new User(req.body.username,req.body.email,req.body.password)
+  dbUser.save(user, (err: Error | null) => {
+    if (err) throw err
+    res.status(200).send('saved')
+    console.log(user)
+    console.log('test')
+  })
+})
+*/
 /*
 app.post('/signup', (req: any, res: any, next: any) => {
   
@@ -170,13 +199,13 @@ app.get('/users/:username', function (req, res, next) {
             res.status(200).json(result);
     });
 });
-app.use('/user', userRouter);
+app.use('/home', authRouter);
 var authCheck = function (req, res, next) {
     if (req.session.loggedIn) {
         next();
     }
     else
-        res.redirect('/login');
+        res.redirect('/');
 };
 app.get('/', authCheck, function (req, res) {
     res.render('home', { name: req.session.username });

@@ -9,7 +9,7 @@ export class UserHandler {
       if (err) callback(err)
       else if (data === undefined) callback(null, data)
       
-      callback(null, User.fromDb(username, data))
+      else callback(null, User.fromDb(username, data))
     })
   }
 
@@ -56,11 +56,11 @@ export class User {
       }
     
       public validatePassword(toValidate: String): boolean {
-        if(toValidate==this.getPassword()){
+        if(toValidate===this.getPassword()){
           return true
         }
         else{
-          return true
+          return false
         }
       }
 }

@@ -19,7 +19,7 @@ app.use(bodyparser.urlencoded())
 const LevelStore = levelSession(session)
 
 app.get('/', (req: any, res: any) => {
-    res.render('home')
+  res.render('home')
 })
 
 app.use(session({
@@ -104,24 +104,61 @@ authRouter.get('/signup', (req: any, res: any) => {
   res.render('signup')
 })
 
-//Get infos of a user for login
-app.post('/login', (req: any, res: any, next: any) => {
+//Logout
+authRouter.get('/logout', (req: any, res: any) => {
+  delete req.session.loggedIn
+  delete req.session.user
+  res.redirect('/')
+})
+
+//User Page
+authRouter.get('/userpage', (req: any, res: any) => {
+  res.render('userpage')
+})
+
+authRouter.post('/signup', (req: any, res: any, next:any) => {
+  let user: User= new User(req.body.username,req.body.email,req.body.password)
+  dbUser.get(req.body.username, function (err: Error | null, result?: User) {
+    if (!err || result !== undefined) {
+      console.log('user already exists')
+      res.redirect('/signup')
+    } else {
+      dbUser.save(user, (err: Error | null) => {
+        if (err) next(err)
+        console.log(user) 
+        req.session.loggedIn = true
+        req.session.user = result
+        res.redirect('/userpage')
+      })
+    }
+  })
+  
+})
+
+//save infos of a user for login
+authRouter.post('/login', (req: any, res: any, next: any) => {
   dbUser.get(req.body.username, (err: Error | null, result?: User) => {
     if (err) next(err)
-    if (result === undefined || !result.validatePassword(req.body.password)) { 
-      console.log('test') 
+    if (result !== undefined) { 
+      if(!result.validatePassword(req.body.password)){
+        console.log('Password false')
+        res.redirect('/login')
+      }
+      else {
+        console.log(result) 
+        console.log('Connexion successful')
+        req.session.loggedIn = true
+        req.session.user = result
+        res.redirect('/userpage')
+      }
+   } else {
       res.redirect('/login')
-    } else {
-      console.log(result) 
-      req.session.loggedIn = true
-      req.session.user = result
-      res.redirect('/')
     }
   })
 })
 
 //Save infos of a user for inscription
-app.post('/signup', (req: any, res: any) => {
+/*app.post('/signup', (req: any, res: any) => {
   let user: User= new User(req.body.username,req.body.email,req.body.password)
   dbUser.save(user, (err: Error | null) => {
     if (err) throw err
@@ -130,13 +167,8 @@ app.post('/signup', (req: any, res: any) => {
     console.log('test') 
   })
 })
+*/
 
-//Logout
-authRouter.get('/logout', (req: any, res: any) => {
-  delete req.session.loggedIn
-  delete req.session.user
-  res.redirect('/login')
-})
 
 
 
@@ -189,11 +221,11 @@ app.get('/users/:username', (req: any, res: any, next: any) => {
 })
 
 
-app.use('/user', userRouter)
+app.use('/home', authRouter)
 const authCheck = function (req: any, res: any, next: any) {
   if (req.session.loggedIn) {
     next()
-  } else res.redirect('/login')
+  } else res.redirect('/')
 }
 
 app.get('/', authCheck, (req: any, res: any) => {

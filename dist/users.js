@@ -11,7 +11,8 @@ var UserHandler = /** @class */ (function () {
                 callback(err);
             else if (data === undefined)
                 callback(null, data);
-            callback(null, User.fromDb(username, data));
+            else
+                callback(null, User.fromDb(username, data));
         });
     };
     UserHandler.prototype.save = function (user, callback) {
@@ -48,11 +49,11 @@ var User = /** @class */ (function () {
         return this.password;
     };
     User.prototype.validatePassword = function (toValidate) {
-        if (toValidate == this.getPassword()) {
+        if (toValidate === this.getPassword()) {
             return true;
         }
         else {
-            return true;
+            return false;
         }
     };
     return User;
