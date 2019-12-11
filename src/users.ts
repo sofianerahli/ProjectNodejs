@@ -13,7 +13,7 @@ export class UserHandler {
     })
   }
 
-  public save(user: User, callback: (err: Error | null) => void) {
+  public save(user: User , callback: (err: Error | null) => void) {
     this.db.put(`user:${user.username}`, `${user.password}:${user.email}`, (err: Error | null) => {
       callback(err)
     })

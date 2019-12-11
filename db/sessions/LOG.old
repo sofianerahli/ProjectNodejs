@@ -1,5 +1,3 @@
-2019/12/11-16:02:47.327 5fcc Recovering log #411
-2019/12/11-16:02:47.328 5fcc Level-0 table #413: started
-2019/12/11-16:02:47.346 5fcc Level-0 table #413: 426 bytes OK
-2019/12/11-16:02:47.354 5fcc Delete type=0 #411
-2019/12/11-16:02:47.354 5fcc Delete type=3 #409
+2019/12/11-16:33:16.020 7490 Recovering log #3
+2019/12/11-16:33:16.033 7490 Delete type=0 #3
+2019/12/11-16:33:16.033 7490 Delete type=3 #2

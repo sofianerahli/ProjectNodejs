@@ -127,9 +127,9 @@ authRouter.post('/signup', (req: any, res: any, next:any) => {
       dbUser.save(user, (err: Error | null) => {
         if (err) next(err)
         console.log(user) 
+        console.log('Inscription successful')
         req.session.loggedIn = true
         req.session.username = req.body.username
-        console.log(req.session.user)
         res.redirect('/userpage')
       })
     }

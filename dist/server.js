@@ -92,7 +92,7 @@ authRouter.get('/signup', function (req, res) {
 //Logout
 authRouter.get('/logout', function (req, res) {
     delete req.session.loggedIn;
-    delete req.session.user;
+    delete req.session.username;
     res.redirect('/');
 });
 //User Page
@@ -111,9 +111,9 @@ authRouter.post('/signup', function (req, res, next) {
                 if (err)
                     next(err);
                 console.log(user);
+                console.log('Inscription successful');
                 req.session.loggedIn = true;
-                req.session.user = result;
-                console.log(req.session.user);
+                req.session.username = req.body.username;
                 res.redirect('/userpage');
             });
         }
