@@ -89,15 +89,16 @@ app.delete('/metrics/:id', (req: any, res: any) => {
 
 
 
-/*USER*/ 
+/****  USER  ****/ 
+
 import { UserHandler, User } from './users'
 const dbUser: UserHandler = new UserHandler('./db/users')
 const authRouter = express.Router()
 
 //Login page
-authRouter.get('/login', (req: any, res: any) => {
+/*authRouter.get('/login', (req: any, res: any) => {
   res.render('login')
-})
+})*/
 
 //Inscription page
 authRouter.get('/signup', (req: any, res: any) => {
@@ -107,7 +108,7 @@ authRouter.get('/signup', (req: any, res: any) => {
 //Logout
 authRouter.get('/logout', (req: any, res: any) => {
   delete req.session.loggedIn
-  delete req.session.user
+  delete req.session.username
   res.redirect('/')
 })
 
@@ -127,7 +128,8 @@ authRouter.post('/signup', (req: any, res: any, next:any) => {
         if (err) next(err)
         console.log(user) 
         req.session.loggedIn = true
-        req.session.user = result
+        req.session.username = req.body.username
+        console.log(req.session.user)
         res.redirect('/userpage')
       })
     }
@@ -137,26 +139,42 @@ authRouter.post('/signup', (req: any, res: any, next:any) => {
 
 //save infos of a user for login
 authRouter.post('/login', (req: any, res: any, next: any) => {
-  dbUser.get(req.body.username, (err: Error | null, result?: User) => {
-    if (err) next(err)
-    if (result !== undefined) { 
-      if(!result.validatePassword(req.body.password)){
-        console.log('Password false')
+    dbUser.get(req.body.username, (err: Error | null, result?: User) => {
+      if (err) next(err)
+      if (result !== undefined) { 
+        if(!result.validatePassword(req.body.password)){
+          console.log('Password false')
+          res.redirect('/login')
+        }
+        else {
+          console.log(result) 
+          console.log('Connexion successful')
+          req.session.loggedIn = true
+          req.session.username = req.body.username
+          res.redirect('/userpage')
+        }
+    } else {
+        console.log('Username invalid')
         res.redirect('/login')
       }
-      else {
-        console.log(result) 
-        console.log('Connexion successful')
-        req.session.loggedIn = true
-        req.session.user = result
-        res.redirect('/userpage')
-      }
-   } else {
-      res.redirect('/login')
-    }
-  })
+    })
 })
 
+// Session
+authRouter.get('/login',function (req: any, res: any, next: any) {
+  if (req.session.loggedIn) {
+    console.log('Welcome '+ req.session.username)
+    res.redirect('/userpage')
+  } else{
+    console.log('Session not found')
+    res.render('login')
+  }
+})
+
+/*
+app.get('/', authCheck, (req: any, res: any) => {
+  res.render('home', { name: req.session.username })
+})*/
 //Save infos of a user for inscription
 /*app.post('/signup', (req: any, res: any) => {
   let user: User= new User(req.body.username,req.body.email,req.body.password)
@@ -211,7 +229,11 @@ userRouter.post('/', (req: any, res: any, next: any) => {
   })
 })
 
-//Get a user
+
+
+
+//Get a user TEST 
+/*
 app.get('/users/:username', (req: any, res: any, next: any) => {
   dbUser.get(req.params.username, function (err: Error | null, result?: User) {
     if (err || result === undefined) {
@@ -219,21 +241,10 @@ app.get('/users/:username', (req: any, res: any, next: any) => {
     } else res.status(200).json(result)
   })
 })
+*/
 
 
-app.use('/home', authRouter)
-const authCheck = function (req: any, res: any, next: any) {
-  if (req.session.loggedIn) {
-    next()
-  } else res.redirect('/')
-}
-
-app.get('/', authCheck, (req: any, res: any) => {
-  res.render('home', { name: req.session.username })
-})
-
-
-/* SERVER*/
+/*SERVER*/
 app.listen(port, (err: Error) => {
   if (err) {
     throw err

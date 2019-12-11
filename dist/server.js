@@ -77,14 +77,14 @@ app.delete('/metrics/:id', function (req, res) {
         res.status(200).json({ data: data });
     });
 });
-/*USER*/
+/****  USER  ****/
 var users_1 = require("./users");
 var dbUser = new users_1.UserHandler('./db/users');
 var authRouter = express.Router();
 //Login page
-authRouter.get('/login', function (req, res) {
-    res.render('login');
-});
+/*authRouter.get('/login', (req: any, res: any) => {
+  res.render('login')
+})*/
 //Inscription page
 authRouter.get('/signup', function (req, res) {
     res.render('signup');
@@ -113,6 +113,7 @@ authRouter.post('/signup', function (req, res, next) {
                 console.log(user);
                 req.session.loggedIn = true;
                 req.session.user = result;
+                console.log(req.session.user);
                 res.redirect('/userpage');
             });
         }
@@ -132,15 +133,31 @@ authRouter.post('/login', function (req, res, next) {
                 console.log(result);
                 console.log('Connexion successful');
                 req.session.loggedIn = true;
-                req.session.user = result;
+                req.session.username = req.body.username;
                 res.redirect('/userpage');
             }
         }
         else {
+            console.log('Username invalid');
             res.redirect('/login');
         }
     });
 });
+// Session
+authRouter.get('/login', function (req, res, next) {
+    if (req.session.loggedIn) {
+        console.log('Welcome ' + req.session.username);
+        res.redirect('/userpage');
+    }
+    else {
+        console.log('Session not found');
+        res.render('login');
+    }
+});
+/*
+app.get('/', authCheck, (req: any, res: any) => {
+  res.render('home', { name: req.session.username })
+})*/
 //Save infos of a user for inscription
 /*app.post('/signup', (req: any, res: any) => {
   let user: User= new User(req.body.username,req.body.email,req.body.password)
@@ -189,28 +206,17 @@ userRouter.post('/', function (req, res, next) {
         }
     });
 });
-//Get a user
-app.get('/users/:username', function (req, res, next) {
-    dbUser.get(req.params.username, function (err, result) {
-        if (err || result === undefined) {
-            res.status(404).send("user not found");
-        }
-        else
-            res.status(200).json(result);
-    });
-});
-app.use('/home', authRouter);
-var authCheck = function (req, res, next) {
-    if (req.session.loggedIn) {
-        next();
-    }
-    else
-        res.redirect('/');
-};
-app.get('/', authCheck, function (req, res) {
-    res.render('home', { name: req.session.username });
-});
-/* SERVER*/
+//Get a user TEST 
+/*
+app.get('/users/:username', (req: any, res: any, next: any) => {
+  dbUser.get(req.params.username, function (err: Error | null, result?: User) {
+    if (err || result === undefined) {
+      res.status(404).send("user not found")
+    } else res.status(200).json(result)
+  })
+})
+*/
+/*SERVER*/
 app.listen(port, function (err) {
     if (err) {
         throw err;
