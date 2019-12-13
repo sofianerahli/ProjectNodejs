@@ -1,5 +1,5 @@
-2019/12/13-19:27:52.719 f70 Recovering log #31
-2019/12/13-19:27:52.719 f70 Level-0 table #33: started
-2019/12/13-19:27:52.727 f70 Level-0 table #33: 228 bytes OK
-2019/12/13-19:27:52.736 f70 Delete type=0 #31
-2019/12/13-19:27:52.738 f70 Delete type=3 #29
+2019/12/13-19:43:48.867 36dc Recovering log #34
+2019/12/13-19:43:48.867 36dc Level-0 table #36: started
+2019/12/13-19:43:48.874 36dc Level-0 table #36: 228 bytes OK
+2019/12/13-19:43:48.882 36dc Delete type=0 #34
+2019/12/13-19:43:48.882 36dc Delete type=3 #32
