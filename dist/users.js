@@ -21,7 +21,13 @@ var UserHandler = /** @class */ (function () {
         });
     };
     UserHandler.prototype.delete = function (username, callback) {
-        // TODO
+        this.db.del("user:" + username, function (err, data) {
+            if (err)
+                callback(err);
+            else {
+                console.log('user deleted');
+            }
+        });
     };
     return UserHandler;
 }());
@@ -43,7 +49,7 @@ var User = /** @class */ (function () {
         return new User(username, email, password);
     };
     User.prototype.setPassword = function (toSet) {
-        // Hash and set password
+        this.password = toSet;
     };
     User.prototype.getPassword = function () {
         return this.password;

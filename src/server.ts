@@ -126,7 +126,6 @@ authRouter.post('/signup', (req: any, res: any, next:any) => {
     } else {
       dbUser.save(user, (err: Error | null) => {
         if (err) next(err)
-        console.log(user) 
         console.log('Inscription successful')
         req.session.loggedIn = true
         req.session.username = req.body.username
@@ -147,7 +146,6 @@ authRouter.post('/login', (req: any, res: any, next: any) => {
           res.redirect('/login')
         }
         else {
-          console.log(result) 
           console.log('Connexion successful')
           req.session.loggedIn = true
           req.session.username = req.body.username
@@ -172,9 +170,16 @@ authRouter.get('/login',function (req: any, res: any, next: any) {
 })
 
 /*
-app.get('/', authCheck, (req: any, res: any) => {
+const authCheck = function (req: any, res: any, next: any) {
+  if (req.session.loggedIn) {
+    next()
+  } else res.redirect('/login')
+}
+authRouter.get('/', authCheck, (req: any, res: any) => {
   res.render('home', { name: req.session.username })
-})*/
+})
+*/
+
 //Save infos of a user for inscription
 /*app.post('/signup', (req: any, res: any) => {
   let user: User= new User(req.body.username,req.body.email,req.body.password)

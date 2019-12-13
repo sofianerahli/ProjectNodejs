@@ -155,9 +155,15 @@ authRouter.get('/login', function (req, res, next) {
     }
 });
 /*
-app.get('/', authCheck, (req: any, res: any) => {
+const authCheck = function (req: any, res: any, next: any) {
+  if (req.session.loggedIn) {
+    next()
+  } else res.redirect('/login')
+}
+authRouter.get('/', authCheck, (req: any, res: any) => {
   res.render('home', { name: req.session.username })
-})*/
+})
+*/
 //Save infos of a user for inscription
 /*app.post('/signup', (req: any, res: any) => {
   let user: User= new User(req.body.username,req.body.email,req.body.password)

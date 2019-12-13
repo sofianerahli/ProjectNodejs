@@ -9,6 +9,8 @@ export class LevelDB {
     const encoded = encoding(leveldown(path), { valueEncoding: 'json' })
     return levelup(encoded)
   }
+
+  //Clear function
   static clear(path: string) {
     if (fs.existsSync(path)) {
       del.sync(path, { force: true })

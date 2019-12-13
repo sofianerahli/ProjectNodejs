@@ -57,7 +57,7 @@ export class MetricsHandler {
     })
   }
 
-  public getOne(key : string,callback: (error: Error | null, data: Metric | null) => void) {
+  public getOne(key : string,callback: (error: Error | null, data: Metric  | null) => void) {
     let MetricFound= false
     this.db.createReadStream()
     .on('data', function (data) {

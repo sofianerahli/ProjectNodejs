@@ -19,8 +19,13 @@ export class UserHandler {
     })
   }
 
-  public delete(username: string, callback: (err: Error | null) => void) {
-    // TODO
+  public delete(username: string, callback: (err: Error | null,result?: User) => void) {
+    this.db.del(`user:${username}`, function (err: Error, data: any) {
+      if (err) callback(err)
+      else if (data === undefined) callback(null, data)
+      
+      else callback(null, User.fromDb(username, data))
+    })
   }
 
   constructor(path: string) {
@@ -48,7 +53,7 @@ export class User {
       }
     
       public setPassword(toSet: string): void {
-        // Hash and set password
+        this.password=toSet
       }
     
       public getPassword(): string {
