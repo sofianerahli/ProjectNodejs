@@ -20,6 +20,9 @@ var MetricsHandler = /** @class */ (function () {
         this.db.close();
     };
     MetricsHandler.prototype.save = function (metrics, callback) {
+        this.db.put("metric:" + metrics.username, metrics.date + ":" + metrics.weight, function (err) {
+            callback(err);
+        });
     };
     MetricsHandler.prototype.getAll = function (callback) {
         var metrics = [];

@@ -6,10 +6,10 @@ export class Metric {
   public timestamp: string
   public value: number
   public username : string
-  public date : Date
+  public date : string
   public weight : number
 
-  constructor( username : string ,date : Date,weight : number ) {
+  constructor( username : string ,date : string,weight : number ) {
     this.timestamp = 'toto'
     this.value = 2
     this.username =username
@@ -37,7 +37,7 @@ export class MetricsHandler {
   public save( metrics: Metric, callback: (error: Error | null) => void) {
    
    
-     this.db.put(`metric:${metrics.username}`, `${metrics.date}:${metrics.weight}`,(err: Error | null) => {
+     this.db.put(`metric:${metrics.username}`,`${metrics.date}:${metrics.weight}`,(err: Error | null) => {
       callback(err)
     })
   }

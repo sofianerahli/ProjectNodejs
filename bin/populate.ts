@@ -18,7 +18,7 @@ var date = new Date(Date.now())
 const a= new User('sofiane','sofiane.rahli@edu.ece.fr','1234')
 const b= new User('yvan','sofiane.rahli@edu.ece.fr','5678')
 const c= new User('kudinov','sergei.kudinov@adaltas.com','nodejs')
-const d = new Metric('sofiane',date,12) 
+const d = new Metric('sofiane','2019-11-04 14:30 UTC',22) 
 
 const db = new MetricsHandler('./db/metrics')
 const dbUser = new UserHandler('./db/users')
