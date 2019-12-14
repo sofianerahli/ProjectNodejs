@@ -41,13 +41,13 @@ app.get('/metrics.json', (req: any, res: any) => {
 
 const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
 
-app.post('/metrics/:id', (req: any, res: any) => {
-  dbMet.save(req.params.id, req.body, (err: Error | null) => {
+/*app.post('/metrics/:id', (req: any, res: any) => {
+ dbMet.save(req.params.id, req.body, (err: Error | null) => {
     if (err) throw err
     res.status(200).send('ok')
     res.end()
   })
-})
+})*/
 
 app.get('/metrics/', (req: any, res: any) => {
   dbMet.getAll((err: Error | null, result: any) => {

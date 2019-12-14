@@ -24,9 +24,10 @@ var UserHandler = /** @class */ (function () {
         this.db.del("user:" + username, function (err, data) {
             if (err)
                 callback(err);
-            else {
-                console.log('user deleted');
-            }
+            else if (data === undefined)
+                callback(null, data);
+            else
+                callback(null, User.fromDb(username, data));
         });
     };
     return UserHandler;

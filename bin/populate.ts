@@ -14,11 +14,11 @@ const met = [
 */
 
 
-
+var date = new Date(Date.now())
 const a= new User('sofiane','sofiane.rahli@edu.ece.fr','1234')
 const b= new User('yvan','sofiane.rahli@edu.ece.fr','5678')
 const c= new User('kudinov','sergei.kudinov@adaltas.com','nodejs')
-  
+const d = new Metric('sofiane',date,12) 
 
 const db = new MetricsHandler('./db/metrics')
 const dbUser = new UserHandler('./db/users')
@@ -37,4 +37,9 @@ dbUser.save(b, (err: Error | null) => {
 dbUser.save(c, (err: Error | null) => {
     if (err) throw err
     console.log('Data populated')
+})
+
+db.save(d,(err: Error | null) => {
+    if (err) throw err
+    console.log('okok')
 })

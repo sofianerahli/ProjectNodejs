@@ -5,11 +5,20 @@ import { Stream } from 'stream'
 export class Metric {
   public timestamp: string
   public value: number
+  public username : string
+  public date : Date
+  public weight : number
 
-  constructor( ts: string, v: number) {
-    this.timestamp = ts
-    this.value = v
+  constructor( username : string ,date : Date,weight : number ) {
+    this.timestamp = 'toto'
+    this.value = 2
+    this.username =username
+    this.date = date
+    this.weight = weight
   }
+
+
+ 
 }
 
 export class MetricsHandler {
@@ -23,15 +32,18 @@ export class MetricsHandler {
   public closeDB(){
     this.db.close();
   }
-  public save(key: string, metrics: Metric[], callback: (error: Error | null) => void) {
-    const stream = WriteStream(this.db)
-    stream.on('error', callback)
-    stream.on('close', callback)
-    metrics.forEach((m: Metric) => {
-      stream.write({ key: `metric:${key}:${m.timestamp}`, value: m.value })
+
+
+  public save( metrics: Metric, callback: (error: Error | null) => void) {
+   
+   
+     this.db.put(`metric:${metrics.username}`, `${metrics.date}:${metrics.weight}`,(err: Error | null) => {
+      callback(err)
     })
-    stream.end()
   }
+    
+    
+  
 
   public getAll( callback: (error: Error | null, result : Metric [] | null) => void) {
     let metrics : Metric[] = []
@@ -40,8 +52,8 @@ export class MetricsHandler {
       console.log(data.key, '=', data.value)
       console.log(data.key.split(':'))
       const timestamp=data.key.split(':')[2];
-      let metric: Metric = new Metric(timestamp,data.value)
-      metrics.push(metric)
+      //let metric: Metric = new Metric(timestamp,data.value)
+      //metrics.push(metric)
     })
     
     .on('error', function (err) {
@@ -67,7 +79,7 @@ export class MetricsHandler {
         console.log(data.key.split(':'))
         const timestamp=data.key.split(':')[2]
         const value = data.value
-        callback(null,new Metric(timestamp, value))
+        //callback(null,new Metric(timestamp, value))
       }
       
     })
@@ -90,7 +102,7 @@ export class MetricsHandler {
         MetricFound= true
         const timestamp=data.key.split(':')[2]
         const value = data.value
-        callback(null,new Metric(timestamp, value))
+        //callback(null,new Metric(timestamp, value))
       }
     })
     
@@ -112,8 +124,8 @@ export class MetricsHandler {
 
   static get(callback: (error: Error | null, result?: Metric[]) => void) {
     const result = [
-      new Metric('2013-11-04 14:00 UTC', 12),
-      new Metric('2013-11-04 14:30 UTC', 15)
+      //new Metric('2013-11-04 14:00 UTC', 12),
+      //new Metric('2013-11-04 14:30 UTC', 15)
     ]
     callback(null, result)
   }

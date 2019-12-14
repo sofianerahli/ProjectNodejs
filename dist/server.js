@@ -34,14 +34,13 @@ app.get('/metrics.json', function (req, res) {
     });
 });
 var dbMet = new metrics_1.MetricsHandler('./db/metrics');
-app.post('/metrics/:id', function (req, res) {
-    dbMet.save(req.params.id, req.body, function (err) {
-        if (err)
-            throw err;
-        res.status(200).send('ok');
-        res.end();
-    });
-});
+/*app.post('/metrics/:id', (req: any, res: any) => {
+ dbMet.save(req.params.id, req.body, (err: Error | null) => {
+    if (err) throw err
+    res.status(200).send('ok')
+    res.end()
+  })
+})*/
 app.get('/metrics/', function (req, res) {
     dbMet.getAll(function (err, result) {
         if (err)
@@ -110,7 +109,6 @@ authRouter.post('/signup', function (req, res, next) {
             dbUser.save(user, function (err) {
                 if (err)
                     next(err);
-                console.log(user);
                 console.log('Inscription successful');
                 req.session.loggedIn = true;
                 req.session.username = req.body.username;
@@ -130,7 +128,6 @@ authRouter.post('/login', function (req, res, next) {
                 res.redirect('/login');
             }
             else {
-                console.log(result);
                 console.log('Connexion successful');
                 req.session.loggedIn = true;
                 req.session.username = req.body.username;
