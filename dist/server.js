@@ -13,6 +13,7 @@ app.set('views', __dirname + "/../views");
 app.set('view engine', 'ejs');
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded());
+var authRouter = express.Router();
 /*SeSSION*/
 var LevelStore = levelSession(session);
 app.get('/', function (req, res) {
@@ -25,44 +26,43 @@ app.use(session({
     saveUninitialized: true
 }));
 /*Metrics*/
-app.get('/metrics.json', function (req, res) {
-    metrics_1.MetricsHandler.get(function (err, result) {
-        if (err) {
+//Metrics Page
+authRouter.get('/userpage/metrics', function (req, res) {
+    res.render('bringmetrics');
+});
+var dbMet = new metrics_1.MetricsHandler('./db/metrics');
+/*
+app.post('/userpage/:id', (req: any, res: any) => {
+  dbMet.save(username, req.body, (err: Error | null) => {
+    if (err) throw err
+    res.status(200).send('ok')
+    res.end()
+  })
+})*/
+authRouter.get('/metrics/:id', function (req, res) {
+    req.params.id = req.session.username;
+    dbMet.getAll(req.params.id, function (err, result) {
+        if (err)
             throw err;
-        }
         res.json(result);
     });
 });
-var dbMet = new metrics_1.MetricsHandler('./db/metrics');
-app.post('/metrics/:id', function (req, res) {
-    dbMet.save(req.params.id, req.body, function (err) {
-        if (err)
-            throw err;
-        res.status(200).send('ok');
-        res.end();
-    });
-});
-app.get('/metrics/', function (req, res) {
-    dbMet.getAll(function (err, result) {
-        if (err)
-            throw err;
-        res.status(200).json({ result: result });
-    });
-});
-app.get('/metrics/:id', function (req, res) {
-    var key = req.params.id;
-    dbMet.getOne(key, function (err, data) {
-        if (err) {
-            if (err.message === "Metric doesn't exist") {
-                res.sendStatus(400);
-                return;
-            }
-            throw err;
-        }
-        ;
-        res.status(200).json({ data: data });
-    });
-});
+/*
+app.get('/metrics/:id', (req: any, res: any) => {
+  const key=req.params.id
+  dbMet.getOne(key,(err: Error | null, data: Metric | null) => {
+    if (err) {
+      if(err.message==="Metric doesn't exist"){
+        res.sendStatus(400);
+        return;
+      }
+      throw err;
+    };
+    res.status(200).json({data})
+    
+  })
+})
+*/
 app.delete('/metrics/:id', function (req, res) {
     var key = req.params.id;
     dbMet.delete(key, function (err, data) {
@@ -80,7 +80,6 @@ app.delete('/metrics/:id', function (req, res) {
 /****  USER  ****/
 var users_1 = require("./users");
 var dbUser = new users_1.UserHandler('./db/users');
-var authRouter = express.Router();
 //Login page
 /*authRouter.get('/login', (req: any, res: any) => {
   res.render('login')
@@ -110,7 +109,6 @@ authRouter.post('/signup', function (req, res, next) {
             dbUser.save(user, function (err) {
                 if (err)
                     next(err);
-                console.log(user);
                 console.log('Inscription successful');
                 req.session.loggedIn = true;
                 req.session.username = req.body.username;
@@ -130,7 +128,6 @@ authRouter.post('/login', function (req, res, next) {
                 res.redirect('/login');
             }
             else {
-                console.log(result);
                 console.log('Connexion successful');
                 req.session.loggedIn = true;
                 req.session.username = req.body.username;
@@ -222,6 +219,14 @@ app.get('/users/:username', (req: any, res: any, next: any) => {
   })
 })
 */
+//Add metrics page
+authRouter.get('/userpage/addmetrics', function (req, res) {
+    res.render('addmetrics');
+});
+//Add metrics page
+authRouter.get('/userpage/deletemetrics', function (req, res) {
+    res.render('deletemetrics');
+});
 /*SERVER*/
 app.listen(port, function (err) {
     if (err) {
