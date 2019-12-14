@@ -49,13 +49,14 @@ const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
   })
 })*/
 
+/*
 app.get('/metrics/', (req: any, res: any) => {
   dbMet.getAll((err: Error | null, result: any) => {
     if (err) throw err
     res.status(200).json({result})
     
   })
-})
+})*/
 
 app.get('/metrics/:id', (req: any, res: any) => {
   const key=req.params.id
@@ -191,8 +192,6 @@ authRouter.get('/', authCheck, (req: any, res: any) => {
   })
 })
 */
-
-
 
 
 /*

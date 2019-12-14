@@ -41,13 +41,14 @@ var dbMet = new metrics_1.MetricsHandler('./db/metrics');
     res.end()
   })
 })*/
-app.get('/metrics/', function (req, res) {
-    dbMet.getAll(function (err, result) {
-        if (err)
-            throw err;
-        res.status(200).json({ result: result });
-    });
-});
+/*
+app.get('/metrics/', (req: any, res: any) => {
+  dbMet.getAll((err: Error | null, result: any) => {
+    if (err) throw err
+    res.status(200).json({result})
+    
+  })
+})*/
 app.get('/metrics/:id', function (req, res) {
     var key = req.params.id;
     dbMet.getOne(key, function (err, data) {

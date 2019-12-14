@@ -20,16 +20,17 @@ var MetricsHandler = /** @class */ (function () {
         this.db.close();
     };
     MetricsHandler.prototype.save = function (metrics, callback) {
-        this.db.put("metric:" + metrics.username, metrics.date + ":" + metrics.weight, function (err) {
+        this.db.put("metric:" + metrics.username, "date:" + metrics.date + ",poids:" + metrics.weight, function (err) {
             callback(err);
         });
     };
-    MetricsHandler.prototype.getAll = function (callback) {
+    MetricsHandler.prototype.getAll = function (username, callback) {
         var metrics = [];
         this.db.createReadStream()
             .on('data', function (data) {
             console.log(data.key, '=', data.value);
-            console.log(data.key.split(':'));
+            console.log(data.value.split(':'));
+            // console.log(data.key.split(':'))
             var timestamp = data.key.split(':')[2];
             //let metric: Metric = new Metric(timestamp,data.value)
             //metrics.push(metric)
@@ -52,8 +53,9 @@ var MetricsHandler = /** @class */ (function () {
             .on('data', function (data) {
             if (key === data.key) {
                 MetricFound = true;
-                console.log(data.key, '=', data.value);
-                console.log(data.key.split(':'));
+                // console.log(data.key, '=', data.value)
+                //console.log(data.key.split(':'))
+                //console.log(data.value.split(':'))
                 var timestamp = data.key.split(':')[2];
                 var value = data.value;
                 //callback(null,new Metric(timestamp, value))

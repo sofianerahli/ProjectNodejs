@@ -34,23 +34,20 @@ export class MetricsHandler {
   }
 
 
-  public save( metrics: Metric, callback: (error: Error | null) => void) {
-   
-   
-     this.db.put(`metric:${metrics.username}`,`${metrics.date}:${metrics.weight}`,(err: Error | null) => {
+  public save( metrics: Metric, callback: (error: Error | null) => void) {  
+     this.db.put(`metric:${metrics.username}`,`${metrics.date},${metrics.weight}`,(err: Error | null) => {
       callback(err)
     })
   }
     
-    
-  
 
-  public getAll( callback: (error: Error | null, result : Metric [] | null) => void) {
+  public getAll(username :string,  callback: (error: Error | null, result : Metric [] | null) => void) {
     let metrics : Metric[] = []
     this.db.createReadStream()
     .on('data', function (data) {
       console.log(data.key, '=', data.value)
-      console.log(data.key.split(':'))
+      console.log(data.value.split(','))
+     // console.log(data.key.split(':'))
       const timestamp=data.key.split(':')[2];
       //let metric: Metric = new Metric(timestamp,data.value)
       //metrics.push(metric)
@@ -75,8 +72,9 @@ export class MetricsHandler {
     .on('data', function (data) {
       if(key===data.key) {
         MetricFound= true
-        console.log(data.key, '=', data.value)
-        console.log(data.key.split(':'))
+       // console.log(data.key, '=', data.value)
+        //console.log(data.key.split(':'))
+        //console.log(data.value.split(':'))
         const timestamp=data.key.split(':')[2]
         const value = data.value
         //callback(null,new Metric(timestamp, value))
