@@ -20,7 +20,7 @@ var MetricsHandler = /** @class */ (function () {
         this.db.close();
     };
     MetricsHandler.prototype.save = function (metrics, callback) {
-        this.db.put("metric:" + metrics.username, "date:" + metrics.date + ",poids:" + metrics.weight, function (err) {
+        this.db.put("metric:" + metrics.username, metrics.date + "," + metrics.weight, function (err) {
             callback(err);
         });
     };
@@ -29,11 +29,14 @@ var MetricsHandler = /** @class */ (function () {
         this.db.createReadStream()
             .on('data', function (data) {
             console.log(data.key, '=', data.value);
-            console.log(data.value.split(':'));
+            console.log(data.value.split(','));
             // console.log(data.key.split(':'))
-            var timestamp = data.key.split(':')[2];
-            //let metric: Metric = new Metric(timestamp,data.value)
-            //metrics.push(metric)
+            var date = data.value.split(',')[0];
+            var weight = data.value.split(',')[1];
+            console.log(date);
+            console.log(weight);
+            var metric = new Metric(username, date, weight);
+            metrics.push(metric);
         })
             .on('error', function (err) {
             console.log('Oh my!', err);

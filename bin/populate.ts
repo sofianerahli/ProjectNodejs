@@ -38,11 +38,11 @@ dbUser.save(c, (err: Error | null) => {
     if (err) throw err
     console.log('Data populated')
 })
-*/
+
 db.save(d,(err: Error | null) => {
     if (err) throw err
     console.log('okok')
-})
+})*/
 
 db.getAll('sofiane',(err: Error | null) => {
     if (err) throw err

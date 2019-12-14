@@ -48,9 +48,12 @@ export class MetricsHandler {
       console.log(data.key, '=', data.value)
       console.log(data.value.split(','))
      // console.log(data.key.split(':'))
-      const timestamp=data.key.split(':')[2];
-      //let metric: Metric = new Metric(timestamp,data.value)
-      //metrics.push(metric)
+      const date=data.value.split(',')[0];
+      const weight = data.value.split(',')[1];
+      console.log(date)
+      console.log(weight)
+      let metric: Metric = new Metric(username,date,weight)
+      metrics.push(metric)
     })
     
     .on('error', function (err) {

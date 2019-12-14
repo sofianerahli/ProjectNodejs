@@ -7,6 +7,7 @@ import levelSession = require('level-session-store')
 
 const app = express()
 const port: string = process.env.PORT || '8083'
+const authRouter = express.Router()
 app.use(express.static(path.join(__dirname, '/../public')))
 
 app.set('views', __dirname + "/../views")
@@ -41,6 +42,7 @@ app.get('/metrics.json', (req: any, res: any) => {
 
 const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
 
+
 /*app.post('/metrics/:id', (req: any, res: any) => {
  dbMet.save(req.params.id, req.body, (err: Error | null) => {
     if (err) throw err
@@ -49,14 +51,23 @@ const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
   })
 })*/
 
-/*
-app.get('/metrics/', (req: any, res: any) => {
-  dbMet.getAll((err: Error | null, result: any) => {
+
+authRouter.get('/metrics/', (req: any, res: any) => {
+  dbMet.getAll(req.session.username,(err: Error | null, result: any) => {
     if (err) throw err
     res.status(200).json({result})
     
   })
-})*/
+})
+
+authRouter.get('/metrics.json', (req: any, res: any) => {
+  MetricsHandler.get((err: Error | null, result?: any) => {
+    if (err) {
+      throw err
+    }
+    res.json({result})
+  })
+})
 
 app.get('/metrics/:id', (req: any, res: any) => {
   const key=req.params.id
@@ -94,7 +105,7 @@ app.delete('/metrics/:id', (req: any, res: any) => {
 
 import { UserHandler, User } from './users'
 const dbUser: UserHandler = new UserHandler('./db/users')
-const authRouter = express.Router()
+
 
 //Login page
 /*authRouter.get('/login', (req: any, res: any) => {

@@ -8,6 +8,7 @@ var session = require("express-session");
 var levelSession = require("level-session-store");
 var app = express();
 var port = process.env.PORT || '8083';
+var authRouter = express.Router();
 app.use(express.static(path.join(__dirname, '/../public')));
 app.set('views', __dirname + "/../views");
 app.set('view engine', 'ejs');
@@ -41,14 +42,21 @@ var dbMet = new metrics_1.MetricsHandler('./db/metrics');
     res.end()
   })
 })*/
-/*
-app.get('/metrics/', (req: any, res: any) => {
-  dbMet.getAll((err: Error | null, result: any) => {
-    if (err) throw err
-    res.status(200).json({result})
-    
-  })
-})*/
+authRouter.get('/metrics/', function (req, res) {
+    dbMet.getAll(req.session.username, function (err, result) {
+        if (err)
+            throw err;
+        res.status(200).json({ result: result });
+    });
+});
+authRouter.get('/metrics.json', function (req, res) {
+    metrics_1.MetricsHandler.get(function (err, result) {
+        if (err) {
+            throw err;
+        }
+        res.json({ result: result });
+    });
+});
 app.get('/metrics/:id', function (req, res) {
     var key = req.params.id;
     dbMet.getOne(key, function (err, data) {
@@ -80,7 +88,6 @@ app.delete('/metrics/:id', function (req, res) {
 /****  USER  ****/
 var users_1 = require("./users");
 var dbUser = new users_1.UserHandler('./db/users');
-var authRouter = express.Router();
 //Login page
 /*authRouter.get('/login', (req: any, res: any) => {
   res.render('login')

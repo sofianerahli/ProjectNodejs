@@ -5,6 +5,8 @@
         <!-- Laisons des fichiers CSS -->
         <link rel="stylesheet" href="../css/bootstrap.min.css">
         <link rel="stylesheet" href="../css/home.css">
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
     </head>
     <body class="container">
         <div class="jumbotron">
@@ -36,10 +38,11 @@
         </div>
         <script>
             $('#show-metrics').click((e) => {
+                
                 e.preventDefault();
                 $.getJSON("/metrics.json", {}, (data) => {
                 const content = data.map(d => {
-                    return 'timestamp: '+d.timestamp+', value: '+d.value+'';
+                    return 'date: '+d.date+', weight: '+d.weight+'';
                 })
                 $('#metrics').append(content.join("\n"));
                 });
