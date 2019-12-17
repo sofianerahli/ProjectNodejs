@@ -14,7 +14,7 @@ app.set('views', __dirname + "/../views")
 app.set('view engine', 'ejs');
 
 app.use(bodyparser.json())
-app.use(bodyparser.urlencoded())
+app.use(bodyparser.urlencoded({extended: true}))
 
 const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
 /*SeSSION*/
@@ -264,9 +264,11 @@ authRouter.get('/userpage/deletemetrics', (req: any, res: any) => {
 
 
 /*SERVER*/
-app.listen(port, (err: Error) => {
+const server = app.listen(port, (err: Error) => {
   if (err) {
     throw err
   }
   console.log(`Server is running on http://localhost:${port}`)
 })
+
+export default server

@@ -12,7 +12,7 @@ const expect= chai.expect
 
 const dbPath: string = 'db_test'
 var dbUser: MetricsHandler = new MetricsHandler('./db/metricstest')
-var server = require('../src/server');
+// var server = require('../src/server');
 
 
 
