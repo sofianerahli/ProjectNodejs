@@ -13,7 +13,7 @@ app.set('views', __dirname + "/../views")
 app.set('view engine', 'ejs');
 
 app.use(bodyparser.json())
-app.use(bodyparser.urlencoded())
+app.use(bodyparser.urlencoded({extended: true}))
 const authRouter = express.Router()
 
 /*SeSSION*/
