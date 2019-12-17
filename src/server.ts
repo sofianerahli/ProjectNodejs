@@ -36,16 +36,7 @@ app.use(session({
 //Metrics Page
 
 
-/*app.post('/metrics/:id', (req: any, res: any) => {
- dbMet.save(req.params.id, req.body, (err: Error | null) => {
-    if (err) throw err
-    res.status(200).send('ok')
-    res.end()
-  })
-})*/
-
-
-authRouter.get('/metrics/', (req: any, res: any) => {
+authRouter.get('userpage/metrics', (req: any, res: any) => {
   dbMet.getAll(req.session.username,(err: Error | null, result: any) => {
     if (err) throw err
     res.json(result)
@@ -61,22 +52,13 @@ authRouter.get('/metrics.json', (req: any, res: any) => {
   })
 })
 
-/*
 app.get('/metrics/:id', (req: any, res: any) => {
-  const key=req.params.id
-  dbMet.getOne(key,(err: Error | null, data: Metric | null) => {
-    if (err) {
-      if(err.message==="Metric doesn't exist"){
-        res.sendStatus(400);
-        return;
-      }
-      throw err;
-    };
-    res.status(200).json({data})
-    
+  dbMet.getAll(req.session.username, (err: Error | null, result?: any) => {
+    if (err) throw err
+    res.json(result)
   })
 })
-*/
+
 
 app.delete('/metrics/:id', (req: any, res: any) => {
   const key=req.params.id
@@ -89,7 +71,6 @@ app.delete('/metrics/:id', (req: any, res: any) => {
       throw err;
     };
     res.status(200).json({data})
-    
   })
 })
 
@@ -262,6 +243,10 @@ authRouter.get('/userpage/deletemetrics', (req: any, res: any) => {
   res.render('deletemetrics')
 })
 
+//Add metrics page
+authRouter.get('/userpage/metrics', (req: any, res: any) => {
+  res.render('bringmetrics')
+})
 
 /*SERVER*/
 const server = app.listen(port, (err: Error) => {

@@ -43,17 +43,24 @@ export class MetricsHandler {
 
   public getAll(username :string,  callback: (error: Error | null, result : Metric [] | null) => void) {
     let metrics : Metric[] = []
+    let a=0
     this.db.createReadStream()
     .on('data', function (data) {
+      
       console.log(data.key, '=', data.value)
       console.log(data.value.split(','))
      // console.log(data.key.split(':'))
+      const name= data.key.split(':')[1];
+      console.log(name)
       const date=data.value.split(',')[0];
       const weight = data.value.split(',')[1];
       console.log(date)
       console.log(weight)
-      let metric: Metric = new Metric(username,date,weight)
-      metrics.push(metric)
+      if(username===name){
+        a=1
+        let metric: Metric = new Metric(username,date,weight)
+        metrics.push(metric)
+      }
     })
     
     .on('error', function (err) {
@@ -62,11 +69,16 @@ export class MetricsHandler {
     })
     .on('close', function () {
       console.log('Stream closed')
+      
     })
     .on('end', function () {
       console.log('Stream ended')
+      if(a===0){
+        console.log("You don't have some metrics: Please add metrics")
+      }
       callback(null,metrics)
     })
+
   }
 
   public getOne(key : string,callback: (error: Error | null, data: Metric  | null) => void) {

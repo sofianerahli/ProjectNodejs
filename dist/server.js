@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname, '/../public')));
 app.set('views', __dirname + "/../views");
 app.set('view engine', 'ejs');
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded());
+app.use(bodyparser.urlencoded({ extended: true }));
 var dbMet = new metrics_1.MetricsHandler('./db/metrics');
 /*SeSSION*/
 var LevelStore = levelSession(session);
@@ -28,14 +28,7 @@ app.use(session({
 }));
 /*Metrics*/
 //Metrics Page
-/*app.post('/metrics/:id', (req: any, res: any) => {
- dbMet.save(req.params.id, req.body, (err: Error | null) => {
-    if (err) throw err
-    res.status(200).send('ok')
-    res.end()
-  })
-})*/
-authRouter.get('/metrics/', function (req, res) {
+authRouter.get('userpage/metrics', function (req, res) {
     dbMet.getAll(req.session.username, function (err, result) {
         if (err)
             throw err;
@@ -50,22 +43,13 @@ authRouter.get('/metrics.json', function (req, res) {
         res.json({ result: result });
     });
 });
-/*
-app.get('/metrics/:id', (req: any, res: any) => {
-  const key=req.params.id
-  dbMet.getOne(key,(err: Error | null, data: Metric | null) => {
-    if (err) {
-      if(err.message==="Metric doesn't exist"){
-        res.sendStatus(400);
-        return;
-      }
-      throw err;
-    };
-    res.status(200).json({data})
-    
-  })
-})
-*/
+app.get('/metrics/:id', function (req, res) {
+    dbMet.getAll(req.session.username, function (err, result) {
+        if (err)
+            throw err;
+        res.json(result);
+    });
+});
 app.delete('/metrics/:id', function (req, res) {
     var key = req.params.id;
     dbMet.delete(key, function (err, data) {
@@ -230,10 +214,15 @@ authRouter.get('/userpage/addmetrics', function (req, res) {
 authRouter.get('/userpage/deletemetrics', function (req, res) {
     res.render('deletemetrics');
 });
+//Add metrics page
+authRouter.get('/userpage/metrics', function (req, res) {
+    res.render('bringmetrics');
+});
 /*SERVER*/
-app.listen(port, function (err) {
+var server = app.listen(port, function (err) {
     if (err) {
         throw err;
     }
     console.log("Server is running on http://localhost:" + port);
 });
+exports.default = server;
