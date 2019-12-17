@@ -35,5 +35,20 @@
                 My metrics
             </button>
         </div>
+<<<<<<< HEAD
+        <script>
+            $('#show-metrics').click((e) => {
+                
+                e.preventDefault();
+                $.getJSON("/metrics.json", {}, (data) => {
+                const content = data.map(d => {
+                    return 'date: '+d.date+', weight: '+d.weight+'';
+                })
+                $('#metrics').append(content.join("\n"));
+                });
+            })
+        </script>
+=======
+>>>>>>> eca1b4a7856ec700369baacd7921b7fd52b55149
     </body>
 </html>

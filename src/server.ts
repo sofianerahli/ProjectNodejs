@@ -7,6 +7,7 @@ import levelSession = require('level-session-store')
 
 const app = express()
 const port: string = process.env.PORT || '8083'
+const authRouter = express.Router()
 app.use(express.static(path.join(__dirname, '/../public')))
 
 app.set('views', __dirname + "/../views")
@@ -14,8 +15,8 @@ app.set('view engine', 'ejs');
 
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended: true}))
-const authRouter = express.Router()
 
+const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
 /*SeSSION*/
 const LevelStore = levelSession(session)
 
@@ -35,26 +36,31 @@ app.use(session({
 //Metrics Page
 
 
-authRouter.get('/userpage/metrics', function (req, res) {
-  res.render('bringmetrics');
-});
-
-const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
-/*
-app.post('/userpage/:id', (req: any, res: any) => {
-  dbMet.save(username, req.body, (err: Error | null) => {
+/*app.post('/metrics/:id', (req: any, res: any) => {
+ dbMet.save(req.params.id, req.body, (err: Error | null) => {
     if (err) throw err
     res.status(200).send('ok')
     res.end()
   })
 })*/
-authRouter.get('/metrics/:id', (req: any, res: any) => {
-  req.params.id=req.session.username
-  dbMet.getAll(req.params.id, (err: Error | null, result?: any) => {
+
+
+authRouter.get('/metrics/', (req: any, res: any) => {
+  dbMet.getAll(req.session.username,(err: Error | null, result: any) => {
     if (err) throw err
     res.json(result)
   })
 })
+
+authRouter.get('/metrics.json', (req: any, res: any) => {
+  MetricsHandler.get((err: Error | null, result?: any) => {
+    if (err) {
+      throw err
+    }
+    res.json({result})
+  })
+})
+
 /*
 app.get('/metrics/:id', (req: any, res: any) => {
   const key=req.params.id
@@ -191,8 +197,6 @@ authRouter.get('/', authCheck, (req: any, res: any) => {
   })
 })
 */
-
-
 
 
 /*

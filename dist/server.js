@@ -8,12 +8,13 @@ var session = require("express-session");
 var levelSession = require("level-session-store");
 var app = express();
 var port = process.env.PORT || '8083';
+var authRouter = express.Router();
 app.use(express.static(path.join(__dirname, '/../public')));
 app.set('views', __dirname + "/../views");
 app.set('view engine', 'ejs');
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded());
-var authRouter = express.Router();
+var dbMet = new metrics_1.MetricsHandler('./db/metrics');
 /*SeSSION*/
 var LevelStore = levelSession(session);
 app.get('/', function (req, res) {
@@ -27,24 +28,26 @@ app.use(session({
 }));
 /*Metrics*/
 //Metrics Page
-authRouter.get('/userpage/metrics', function (req, res) {
-    res.render('bringmetrics');
-});
-var dbMet = new metrics_1.MetricsHandler('./db/metrics');
-/*
-app.post('/userpage/:id', (req: any, res: any) => {
-  dbMet.save(username, req.body, (err: Error | null) => {
+/*app.post('/metrics/:id', (req: any, res: any) => {
+ dbMet.save(req.params.id, req.body, (err: Error | null) => {
     if (err) throw err
     res.status(200).send('ok')
     res.end()
   })
 })*/
-authRouter.get('/metrics/:id', function (req, res) {
-    req.params.id = req.session.username;
-    dbMet.getAll(req.params.id, function (err, result) {
+authRouter.get('/metrics/', function (req, res) {
+    dbMet.getAll(req.session.username, function (err, result) {
         if (err)
             throw err;
         res.json(result);
+    });
+});
+authRouter.get('/metrics.json', function (req, res) {
+    metrics_1.MetricsHandler.get(function (err, result) {
+        if (err) {
+            throw err;
+        }
+        res.json({ result: result });
     });
 });
 /*

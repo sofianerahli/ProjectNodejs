@@ -23,7 +23,7 @@ const d = new Metric('yvan','2012-12-12 14:30',2)
 const db = new MetricsHandler('./db/metrics')
 const dbUser = new UserHandler('./db/users')
 
-
+/*
 dbUser.save(a, (err: Error | null) => {
     if (err) throw err
     console.log('Data populated')
@@ -42,7 +42,11 @@ dbUser.save(c, (err: Error | null) => {
 db.save(d,(err: Error | null) => {
     if (err) throw err
     console.log('okok')
+<<<<<<< HEAD
+})*/
+=======
 })
+>>>>>>> eca1b4a7856ec700369baacd7921b7fd52b55149
 
 db.getAll('sofiane',(err: Error | null) => {
     if (err) throw err
