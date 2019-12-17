@@ -4,7 +4,7 @@ import express = require('express')
 import { LevelDB } from '../src/leveldb'
 import { User, UserHandler } from '../src/users'
 
-const app = express()
+// const app = express()
 var chai = require('chai');
 var assert = require('assert');
 const expect= chai.expect
@@ -12,18 +12,21 @@ const port: string = process.env.PORT || '8083'
 
 const dbPath: string = 'db_test'
 var dbUser: UserHandler = new UserHandler('./db/usertest')
-var server = require('../src/server');
+import server from '../src/server'
 
 var assert = require('assert'),
     http = require('http');
 
 describe('Server', function () {
   it('should return 200', function (done) {
-    http.get('http://localhost:8083', function (res) {
+    http.get('http://localhost:' + port, function (res) {
       assert.equal(200, res.statusCode);
       done();
     });
   });
+  after(() => {
+      server.close()
+  })
 })
   
 //Leveldb Users
