@@ -16,6 +16,7 @@ app.set('view engine', 'ejs');
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded())
 
+const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
 /*SeSSION*/
 const LevelStore = levelSession(session)
 
@@ -31,16 +32,8 @@ app.use(session({
 }))
 
 /*Metrics*/ 
-app.get('/metrics.json', (req: any, res: any) => {
-  MetricsHandler.get((err: Error | null, result?: any) => {
-    if (err) {
-      throw err
-    }
-    res.json(result)
-  })
-})
 
-const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
+//Metrics Page
 
 
 /*app.post('/metrics/:id', (req: any, res: any) => {
@@ -55,8 +48,7 @@ const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
 authRouter.get('/metrics/', (req: any, res: any) => {
   dbMet.getAll(req.session.username,(err: Error | null, result: any) => {
     if (err) throw err
-    res.status(200).json({result})
-    
+    res.json(result)
   })
 })
 
@@ -69,6 +61,7 @@ authRouter.get('/metrics.json', (req: any, res: any) => {
   })
 })
 
+/*
 app.get('/metrics/:id', (req: any, res: any) => {
   const key=req.params.id
   dbMet.getOne(key,(err: Error | null, data: Metric | null) => {
@@ -83,6 +76,7 @@ app.get('/metrics/:id', (req: any, res: any) => {
     
   })
 })
+*/
 
 app.delete('/metrics/:id', (req: any, res: any) => {
   const key=req.params.id
@@ -257,6 +251,16 @@ app.get('/users/:username', (req: any, res: any, next: any) => {
   })
 })
 */
+
+//Add metrics page
+authRouter.get('/userpage/addmetrics', (req: any, res: any) => {
+  res.render('addmetrics')
+})
+
+//Add metrics page
+authRouter.get('/userpage/deletemetrics', (req: any, res: any) => {
+  res.render('deletemetrics')
+})
 
 
 /*SERVER*/

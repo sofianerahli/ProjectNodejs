@@ -14,6 +14,7 @@ app.set('views', __dirname + "/../views");
 app.set('view engine', 'ejs');
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded());
+var dbMet = new metrics_1.MetricsHandler('./db/metrics');
 /*SeSSION*/
 var LevelStore = levelSession(session);
 app.get('/', function (req, res) {
@@ -26,15 +27,7 @@ app.use(session({
     saveUninitialized: true
 }));
 /*Metrics*/
-app.get('/metrics.json', function (req, res) {
-    metrics_1.MetricsHandler.get(function (err, result) {
-        if (err) {
-            throw err;
-        }
-        res.json(result);
-    });
-});
-var dbMet = new metrics_1.MetricsHandler('./db/metrics');
+//Metrics Page
 /*app.post('/metrics/:id', (req: any, res: any) => {
  dbMet.save(req.params.id, req.body, (err: Error | null) => {
     if (err) throw err
@@ -46,7 +39,7 @@ authRouter.get('/metrics/', function (req, res) {
     dbMet.getAll(req.session.username, function (err, result) {
         if (err)
             throw err;
-        res.status(200).json({ result: result });
+        res.json(result);
     });
 });
 authRouter.get('/metrics.json', function (req, res) {
@@ -57,20 +50,22 @@ authRouter.get('/metrics.json', function (req, res) {
         res.json({ result: result });
     });
 });
-app.get('/metrics/:id', function (req, res) {
-    var key = req.params.id;
-    dbMet.getOne(key, function (err, data) {
-        if (err) {
-            if (err.message === "Metric doesn't exist") {
-                res.sendStatus(400);
-                return;
-            }
-            throw err;
-        }
-        ;
-        res.status(200).json({ data: data });
-    });
-});
+/*
+app.get('/metrics/:id', (req: any, res: any) => {
+  const key=req.params.id
+  dbMet.getOne(key,(err: Error | null, data: Metric | null) => {
+    if (err) {
+      if(err.message==="Metric doesn't exist"){
+        res.sendStatus(400);
+        return;
+      }
+      throw err;
+    };
+    res.status(200).json({data})
+    
+  })
+})
+*/
 app.delete('/metrics/:id', function (req, res) {
     var key = req.params.id;
     dbMet.delete(key, function (err, data) {
@@ -227,6 +222,14 @@ app.get('/users/:username', (req: any, res: any, next: any) => {
   })
 })
 */
+//Add metrics page
+authRouter.get('/userpage/addmetrics', function (req, res) {
+    res.render('addmetrics');
+});
+//Add metrics page
+authRouter.get('/userpage/deletemetrics', function (req, res) {
+    res.render('deletemetrics');
+});
 /*SERVER*/
 app.listen(port, function (err) {
     if (err) {

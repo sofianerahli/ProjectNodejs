@@ -4,11 +4,11 @@ import { User, UserHandler } from '../src/users'
 /*
 const met = [
 
-  new Metric(`${new Date('2019-11-04 14:00 UTC').getTime()}`, 12),
+  new Metric(${new Date('2019-11-04 14:00 UTC').getTime()}, 12),
 
-  new Metric(`${new Date('2019-11-04 14:15 UTC').getTime()}`, 10),
+  new Metric(${new Date('2019-11-04 14:15 UTC').getTime()}, 10),
 
-  new Metric(`${new Date('2019-11-04 14:30 UTC').getTime()}`, 8)
+  new Metric(${new Date('2019-11-04 14:30 UTC').getTime()}, 
 
 ]
 */
@@ -42,7 +42,11 @@ dbUser.save(c, (err: Error | null) => {
 db.save(d,(err: Error | null) => {
     if (err) throw err
     console.log('okok')
+<<<<<<< HEAD
 })*/
+=======
+})
+>>>>>>> eca1b4a7856ec700369baacd7921b7fd52b55149
 
 db.getAll('sofiane',(err: Error | null) => {
     if (err) throw err

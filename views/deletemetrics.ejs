@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">  
+        <!-- Laisons des fichiers CSS -->
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/login.css">
+    </head>
+    <body class="arriereplan">
+        <div class="bloc">  
+            <h1 align="center">Delete Metrics</h1> 
+            <hr>
+            <button class="btn btn-danger" href="/userpage" onClick='document.location.href="/userpage"'>
+                Home Userpage
+            </button>
+            <form action="userpage/deletemetrics" method="post">
+                <div>
+                    <label for="form_id">Write the id of the metric </label>
+                    <input id="form_id" type="number" required placeholder="id metric" name="id_metric" />
+                </div>
+                <hr>
+                <button type="submit" class="btn btn-primary" value="Submit">Delete</button>
+            </form>
+        </div>
+    </body>
+</html>
