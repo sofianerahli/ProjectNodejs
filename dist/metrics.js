@@ -31,12 +31,15 @@ var MetricsHandler = /** @class */ (function () {
             console.log(data.key, '=', data.value);
             console.log(data.value.split(','));
             // console.log(data.key.split(':'))
+            var name = data.key.split(':')[1];
             var date = data.value.split(',')[0];
             var weight = data.value.split(',')[1];
             console.log(date);
             console.log(weight);
-            var metric = new Metric(username, date, weight);
-            metrics.push(metric);
+            if (username === name) {
+                var metric = new Metric(username, date, weight);
+                metrics.push(metric);
+            }
         })
             .on('error', function (err) {
             console.log('Oh my!', err);
@@ -77,27 +80,33 @@ var MetricsHandler = /** @class */ (function () {
     MetricsHandler.prototype.delete = function (key, callback) {
         var MetricFound = false;
         var metrics = [];
-        this.db.createReadStream()
-            .on('data', function (data) {
-            if (key === data.key) {
-                MetricFound = true;
-                var timestamp = data.key.split(':')[2];
-                var value = data.value;
-                //callback(null,new Metric(timestamp, value))
-            }
+        /*this.db.createReadStream()
+        .on('data', function (data) {
+    
+          const name = data.key.split(':')[1];
+          const date=data.value.split(',')[0];
+          const weight = data.value.split(',')[1];
+          if(key===name) {
+            MetricFound= true;
+            
+          }
         })
-            .on('error', function (err) {
-            console.log('Oh my!', err);
-            callback(err, null);
+        
+        .on('error', function (err) {
+          console.log('Oh my!', err)
+          callback(err,null)
         })
-            .on('end', function () {
-            if (!MetricFound)
-                callback(Error("Metric doesn't exist"), null);
-            console.log('Stream ended');
+        .on('end', function () {
+    
+          if(MetricFound) {
+            console.log('vu et supp')
+          }
+          
+          console.log('Stream ended')
+        })*/
+        this.db.del(key, function (err) {
+            console.log('ici');
         });
-        if (MetricFound) {
-            this.db.del(key);
-        }
     };
     MetricsHandler.get = function (callback) {
         var result = [

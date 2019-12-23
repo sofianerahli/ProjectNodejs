@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname, '/../public')));
 app.set('views', __dirname + "/../views");
 app.set('view engine', 'ejs');
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded());
+app.use(bodyparser.urlencoded({ extended: true }));
 var dbMet = new metrics_1.MetricsHandler('./db/metrics');
 /*SeSSION*/
 var LevelStore = levelSession(session);
@@ -27,7 +27,7 @@ app.use(session({
     saveUninitialized: true
 }));
 /*Metrics*/
-//Metrics Page
+//Metrics Page 
 /*app.post('/metrics/:id', (req: any, res: any) => {
  dbMet.save(req.params.id, req.body, (err: Error | null) => {
     if (err) throw err
@@ -231,9 +231,10 @@ authRouter.get('/userpage/deletemetrics', function (req, res) {
     res.render('deletemetrics');
 });
 /*SERVER*/
-app.listen(port, function (err) {
+var server = app.listen(port, function (err) {
     if (err) {
         throw err;
     }
     console.log("Server is running on http://localhost:" + port);
 });
+exports.default = server;
