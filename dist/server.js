@@ -36,14 +36,6 @@ authRouter.get('userpage/metrics', function (req, res) {
         res.json(result);
     });
 });
-authRouter.get('/metrics.json', function (req, res) {
-    metrics_1.MetricsHandler.get(function (err, result) {
-        if (err) {
-            throw err;
-        }
-        res.json({ result: result });
-    });
-});
 app.get('/metrics/:id', function (req, res) {
     dbMet.getAll(req.session.username, function (err, result) {
         if (err)
@@ -57,26 +49,13 @@ authRouter.post('/addmetrics', function (req, res, next) {
     dbMet.save(metric, function (err) {
         if (err) {
             next(err);
+        }
+        else {
             console.log('Metric added');
-            res.redirect('/addmetrics');
+            res.redirect('/userpage');
         }
     });
 });
-/*
-app.delete('/metrics/:id', (req: any, res: any) => {
-  const key=req.params.id
-  dbMet.delete(key,(err: Error | null, data: Metric) => {
-    if (err) {
-      if(err.message==="Metric doesn't exist"){
-        res.sendStatus(400);
-        return;
-      }
-      throw err;
-    };
-    res.status(200).json({data})
-  })
-})
-*/
 /****  USER  ****/
 var users_1 = require("./users");
 var dbUser = new users_1.UserHandler('./db/users');
@@ -150,21 +129,6 @@ authRouter.get('/login', function (req, res, next) {
 });
 app.use(authRouter);
 var userRouter = express.Router();
-userRouter.post('/', function (req, res, next) {
-    dbUser.get(req.body.username, function (err, result) {
-        if (!err || result !== undefined) {
-            res.status(409).send("user already exists");
-        }
-        else {
-            dbUser.save(req.body, function (err) {
-                if (err)
-                    next(err);
-                else
-                    res.status(201).send("user persisted");
-            });
-        }
-    });
-});
 //Add metrics page
 authRouter.get('/addmetrics', function (req, res) {
     res.render('addmetrics');

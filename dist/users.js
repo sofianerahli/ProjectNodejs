@@ -26,8 +26,6 @@ var UserHandler = /** @class */ (function () {
                 callback(err);
             else if (data === undefined)
                 callback(null, data);
-            else
-                callback(null, User.fromDb(username, data));
         });
     };
     return UserHandler;

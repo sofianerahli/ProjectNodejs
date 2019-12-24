@@ -1,20 +1,6 @@
 import { Metric, MetricsHandler } from '../src/metrics'
 import { User, UserHandler } from '../src/users'
 
-/*
-const met = [
-
-  new Metric(${new Date('2019-11-04 14:00 UTC').getTime()}, 12),
-
-  new Metric(${new Date('2019-11-04 14:15 UTC').getTime()}, 10),
-
-  new Metric(${new Date('2019-11-04 14:30 UTC').getTime()}, 
-
-]
-*/
-
-
-let z :Metric
 const userA= new User('sofiane','sofiane.rahli@edu.ece.fr','1234')
 const userB= new User('yvan','sofiane.rahli@edu.ece.fr','5678')
 const userC= new User('kudinov','sergei.kudinov@adaltas.com','nodejs')
@@ -27,12 +13,6 @@ const metricB2 = new Metric(4,'yvan','2018-12-13',75)
 
 const metricC1 = new Metric(5,'kudinov','2016-12-12',69) 
 const metricC2 = new Metric(6,'kudinov','2017-12-13',75) 
-
-
-
-
-
-
 
 const db = new MetricsHandler('./db/metrics')
 const dbUser = new UserHandler('./db/users')

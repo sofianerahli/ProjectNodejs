@@ -46,14 +46,6 @@ authRouter.get('userpage/metrics', (req: any, res: any) => {
   })
 })
 
-authRouter.get('/metrics.json', (req: any, res: any) => {
-  MetricsHandler.get((err: Error | null, result?: any) => {
-    if (err) {
-      throw err
-    }
-    res.json({result})
-  })
-})
 
 app.get('/metrics/:id', (req: any, res: any) => {
   dbMet.getAll(req.session.username, (err: Error | null, result?: any) => {
@@ -68,27 +60,13 @@ authRouter.post('/addmetrics', (req: any, res: any, next:any) => {
   dbMet.save(metric, (err: Error | null) => {
     if (err) {
       next(err)
+    }
+    else{
       console.log('Metric added')
-      res.redirect('/addmetrics')
+      res.redirect('/userpage')
     }
   })
 })
-
-/*
-app.delete('/metrics/:id', (req: any, res: any) => {
-  const key=req.params.id
-  dbMet.delete(key,(err: Error | null, data: Metric) => {
-    if (err) {
-      if(err.message==="Metric doesn't exist"){
-        res.sendStatus(400);
-        return;
-      }
-      throw err;
-    };
-    res.status(200).json({data})
-  })
-})
-*/
 
 
 /****  USER  ****/ 
@@ -169,20 +147,6 @@ authRouter.get('/login',function (req: any, res: any, next: any) {
 app.use(authRouter)
 
 const userRouter = express.Router()
-
-
-userRouter.post('/', (req: any, res: any, next: any) => {
-  dbUser.get(req.body.username, function (err: Error | null, result?: User) {
-    if (!err || result !== undefined) {
-      res.status(409).send("user already exists")
-    } else {
-      dbUser.save(req.body, function (err: Error | null) {
-        if (err) next(err)
-        else res.status(201).send("user persisted")
-      })
-    }
-  })
-})
 
 //Add metrics page
 authRouter.get('/addmetrics', (req: any, res: any) => {

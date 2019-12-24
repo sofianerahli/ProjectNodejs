@@ -23,8 +23,6 @@ export class UserHandler {
     this.db.del(`user:${username}`, function (err: Error, data: any) {
       if (err) callback(err)
       else if (data === undefined) callback(null, data)
-      
-      else callback(null, User.fromDb(username, data))
     })
   }
 

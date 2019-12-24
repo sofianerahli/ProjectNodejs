@@ -5,6 +5,7 @@
         <!-- Laisons des fichiers CSS -->
         <link rel="stylesheet" href="../css/bootstrap.min.css">
         <link rel="stylesheet" href="../css/home.css">
+        <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="/js/jquery.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
     </head>
@@ -23,12 +24,12 @@
         </div>
         <div id="metrics"></div>
         </div>
-        <script>
+        <script>      
         $('#show-metrics').click((e) => {
             e.preventDefault();
             $.getJSON("/metrics/:id", {}, (data) => {
             const content = data.map(d => {
-                return 'date: '+d.date+', weight: '+d.weight+'';
+                alert('date: '+d.date+', weight: '+d.weight+'');
             })
             $('#metrics').append(content.join("\n"));
             });
