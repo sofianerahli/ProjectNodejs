@@ -31,7 +31,7 @@ describe('Server', function () {
   
 //Leveldb Users
 describe('Test Leveldb Users', function () {
-    it('Good connection to the leveldb', function(){
+    it('Good connection to the leveldb: users', function(){
         before(function () {
             LevelDB.clear(dbPath)
             dbUser = new UserHandler(dbPath)

@@ -26,6 +26,7 @@ export class MetricsHandler {
     this.db = LevelDB.open(dbPath)
   }
   
+  
   public closeDB(){
     this.db.close();
   }
@@ -41,9 +42,11 @@ export class MetricsHandler {
 
   public getAll(username :string,  callback: (error: Error | null, result : Metric [] | null) => void) {
     let metrics : Metric[] = []
+    let a=0
     let i=0
     this.db.createReadStream()
     .on('data', function (data) {
+      
       console.log(data.key, '=', data.value)
       console.log(data.value.split(','))
      // console.log(data.key.split(':'))
@@ -55,7 +58,8 @@ export class MetricsHandler {
       if(username === name ){
       console.log('trouve')
       let metric: Metric = new Metric(i,username,date,weight)
-      metrics.push(metric)}
+      metrics.push(metric)
+    a=1}
       i++
     })
     
@@ -65,11 +69,16 @@ export class MetricsHandler {
     })
     .on('close', function () {
       console.log('Stream closed')
+      
     })
     .on('end', function () {
       console.log('Stream ended')
+      if(a===0){
+        console.log("You don't have some metrics: Please add metrics")
+      }
       callback(null,metrics)
     })
+
   }
 
   public getOne(key : string,callback: (error: Error | null, data: Metric  | null) => void) {
@@ -96,18 +105,81 @@ export class MetricsHandler {
       console.log('Stream ended')
     })
   }
-
-  public delete(key : number,callback: (error: Error | null, data) => void) {
+  
+  
+  delete(key : number ) :Metric {
     let MetricFound= false
     let metrics : Metric[] = []
+    let a=0
+    let i=0
+    this.db.createReadStream()
    
-    this.db.del(key, function (err) {
-      if (err) throw err;
-      console.log('Deletion sucessful.');
-    });
+    .on('data', function (data) {
+      
+      console.log(data.key, '=', data.value)
+      console.log(data.value.split(','))
+     // console.log(data.key.split(':'))
+     const id = data.key.split(':')[1];
+     const name = data.value.split(',')[0];
+      const date=data.value.split(',')[1];
+      const weight = data.value.split(',')[2];
+      console.log(id)
+      console.log(key)
+
+      if(id == key ){
+      console.log('la')
+      a=1
+      let metric: Metric = new Metric(id,name,date,weight)
+      metrics.push(metric)
+      console.log(metrics[0].id)
+      
     
+     i++;
+    }
+      
+    })
+
+    .on('end', function () {
+      
+      console.log('Stream ended')
+      console.log(metrics[0].id)
+      
+      
+      
+    })
+
+    return metrics[0];
+
+
+    /*
+    this.deleteOne(metrics[0],(err: Error | null) => {
+      if (err) throw err
+      console.log('oups')
+  })*/
+   
+
     
+
+    
+    /*
+    console.log('deletion zone')
+
+    if(a===1)
+    {
+      
+    this.db
   }
+    */
+    
+  
+  }
+  
+
+  public deleteOne(metrics: Metric,callback: (error: Error | null) => void) {  
+    this.db.del(`id:${metrics.id}`,`${metrics.username},${metrics.date},${metrics.weight}`,(err: Error | null) => {
+     callback(err)
+   })
+ }
 
   static get(callback: (error: Error | null, result?: Metric[]) => void) {
     const result = [
@@ -116,6 +188,7 @@ export class MetricsHandler {
     ]
     callback(null, result)
   }
+
   
 
   

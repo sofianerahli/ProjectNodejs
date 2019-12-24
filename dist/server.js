@@ -28,14 +28,7 @@ app.use(session({
 }));
 /*Metrics*/
 //Metrics Page 
-/*app.post('/metrics/:id', (req: any, res: any) => {
- dbMet.save(req.params.id, req.body, (err: Error | null) => {
-    if (err) throw err
-    res.status(200).send('ok')
-    res.end()
-  })
-})*/
-authRouter.get('/metrics/', function (req, res) {
+authRouter.get('userpage/metrics', function (req, res) {
     dbMet.getAll(req.session.username, function (err, result) {
         if (err)
             throw err;
@@ -50,10 +43,26 @@ authRouter.get('/metrics.json', function (req, res) {
         res.json({ result: result });
     });
 });
+app.get('/metrics/:id', function (req, res) {
+    dbMet.getAll(req.session.username, function (err, result) {
+        if (err)
+            throw err;
+        res.json(result);
+    });
+});
+app.post('/addmetrics', function (req, res, next) {
+    var a = Math.floor(Math.random() * 3000) + 1;
+    var metric = new metrics_1.Metric(a, req.session.username, req.body.form_date, req.body.form_weight);
+    dbMet.save(metric, function (err) {
+        if (err)
+            next(err);
+        console.log('Metrics added');
+    });
+});
 /*
-app.get('/metrics/:id', (req: any, res: any) => {
+app.delete('/metrics/:id', (req: any, res: any) => {
   const key=req.params.id
-  dbMet.getOne(key,(err: Error | null, data: Metric | null) => {
+  dbMet.delete(key,(err: Error | null, data: Metric) => {
     if (err) {
       if(err.message==="Metric doesn't exist"){
         res.sendStatus(400);
@@ -62,24 +71,9 @@ app.get('/metrics/:id', (req: any, res: any) => {
       throw err;
     };
     res.status(200).json({data})
-    
   })
 })
 */
-app.delete('/metrics/:id', function (req, res) {
-    var key = req.params.id;
-    dbMet.delete(key, function (err, data) {
-        if (err) {
-            if (err.message === "Metric doesn't exist") {
-                res.sendStatus(400);
-                return;
-            }
-            throw err;
-        }
-        ;
-        res.status(200).json({ data: data });
-    });
-});
 /****  USER  ****/
 var users_1 = require("./users");
 var dbUser = new users_1.UserHandler('./db/users');
@@ -229,6 +223,10 @@ authRouter.get('/userpage/addmetrics', function (req, res) {
 //Add metrics page
 authRouter.get('/userpage/deletemetrics', function (req, res) {
     res.render('deletemetrics');
+});
+//Add metrics page
+authRouter.get('/userpage/metrics', function (req, res) {
+    res.render('bringmetrics');
 });
 /*SERVER*/
 var server = app.listen(port, function (err) {
