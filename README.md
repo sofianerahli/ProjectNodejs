@@ -60,6 +60,22 @@ npm start
 You can then access the server through port 8083. 
 Server is running on http://localhost:8083
 
+## Routes
+
+| Method | Route  | Desciption  | 
+|---|---|---|
+| GET  | /  | Home | 
+| GET  | userpage/metrics  | Get metrics  |  
+| POST  | /addmetrics  | Add a metric  | 
+| GET  | /signup  | Signup Page   | 
+| GET  | /userpage | Userpage | 
+| GET  | /logout  | Logout  | 
+| POST  | /sigunp  | Add an user  | 
+| POST  | /login  | Log an user  | 
+| GET  | /addmetrics  | Page add metrics  | 
+| GET  | /deletemetrics  | Page delete a metric  | 
+| GET | /userpage/bringmetrics  | Bring metrics of the user  | 
+
 ## Contributors
 
 - RAHLI Sofiane 
