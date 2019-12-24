@@ -65,7 +65,7 @@ Server is running on http://localhost:8083
 | Method | Route  | Desciption  | 
 |---|---|---|
 | GET  | /  | Home | 
-| GET  | userpage/metrics  | Get metrics  |  
+| GET  | /userpage/metrics  | Get metrics  |  
 | POST  | /addmetrics  | Add a metric  | 
 | GET  | /signup  | Signup Page   | 
 | GET  | /userpage | Userpage | 
