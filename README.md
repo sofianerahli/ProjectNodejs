@@ -1,6 +1,7 @@
 # Asynchronous Server Technologies project
 
 [![Build Status](https://travis-ci.org/sofianerahli/ProjectNodejs.svg?branch=master)](https://travis-ci.org/sofianerahli/ProjectNodejs) 
+[![Coverage Status](https://coveralls.io/repos/github/sofianerahli/ProjectNodejs/badge.svg?branch=master)](https://coveralls.io/github/sofianerahli/ProjectNodejs?branch=master)
 
 ## Introduction
 
@@ -14,8 +15,8 @@ The project is a Node.js web API on TypeScript, css and ejs with a dashboard tha
   - Home page
   - Sign In / Sign Up / Sign Out
   - Insert/update/delete metrics once logged in
-  - Retrieve the user’s metrics and display it in a graph
-  - Only access the user’s metrics, not the other ones
+  - Retrieve the userâ€™s metrics and display it in a graph
+  - Only access the userâ€™s metrics, not the other ones
 
 ## Installing
 
