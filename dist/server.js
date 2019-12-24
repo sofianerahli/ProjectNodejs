@@ -15,11 +15,12 @@ app.set('view engine', 'ejs');
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 var dbMet = new metrics_1.MetricsHandler('./db/metrics');
-/*SeSSION*/
-var LevelStore = levelSession(session);
+/*Home*/
 app.get('/', function (req, res) {
     res.render('home');
 });
+/*SeSSION*/
+var LevelStore = levelSession(session);
 app.use(session({
     secret: 'my very secret phrase',
     store: new LevelStore('./db/sessions'),
@@ -27,7 +28,7 @@ app.use(session({
     saveUninitialized: true
 }));
 /*Metrics*/
-//Metrics Page
+//Metrics Page 
 authRouter.get('userpage/metrics', function (req, res) {
     dbMet.getAll(req.session.username, function (err, result) {
         if (err)
@@ -50,27 +51,35 @@ app.get('/metrics/:id', function (req, res) {
         res.json(result);
     });
 });
-app.delete('/metrics/:id', function (req, res) {
-    var key = req.params.id;
-    dbMet.delete(key, function (err, data) {
+authRouter.post('/addmetrics', function (req, res, next) {
+    var a = Math.floor(Math.random() * 3000) + 1;
+    var metric = new metrics_1.Metric(a, req.session.username, req.body.date, req.body.weight);
+    dbMet.save(metric, function (err) {
         if (err) {
-            if (err.message === "Metric doesn't exist") {
-                res.sendStatus(400);
-                return;
-            }
-            throw err;
+            next(err);
+            console.log('Metric added');
+            res.redirect('/addmetrics');
         }
-        ;
-        res.status(200).json({ data: data });
     });
 });
+/*
+app.delete('/metrics/:id', (req: any, res: any) => {
+  const key=req.params.id
+  dbMet.delete(key,(err: Error | null, data: Metric) => {
+    if (err) {
+      if(err.message==="Metric doesn't exist"){
+        res.sendStatus(400);
+        return;
+      }
+      throw err;
+    };
+    res.status(200).json({data})
+  })
+})
+*/
 /****  USER  ****/
 var users_1 = require("./users");
 var dbUser = new users_1.UserHandler('./db/users');
-//Login page
-/*authRouter.get('/login', (req: any, res: any) => {
-  res.render('login')
-})*/
 //Inscription page
 authRouter.get('/signup', function (req, res) {
     res.render('signup');
@@ -85,6 +94,7 @@ authRouter.get('/logout', function (req, res) {
 authRouter.get('/userpage', function (req, res) {
     res.render('userpage');
 });
+//Signup
 authRouter.post('/signup', function (req, res, next) {
     var user = new users_1.User(req.body.username, req.body.email, req.body.password);
     dbUser.get(req.body.username, function (err, result) {
@@ -104,7 +114,7 @@ authRouter.post('/signup', function (req, res, next) {
         }
     });
 });
-//save infos of a user for login
+//Login
 authRouter.post('/login', function (req, res, next) {
     dbUser.get(req.body.username, function (err, result) {
         if (err)
@@ -138,47 +148,6 @@ authRouter.get('/login', function (req, res, next) {
         res.render('login');
     }
 });
-/*
-const authCheck = function (req: any, res: any, next: any) {
-  if (req.session.loggedIn) {
-    next()
-  } else res.redirect('/login')
-}
-authRouter.get('/', authCheck, (req: any, res: any) => {
-  res.render('home', { name: req.session.username })
-})
-*/
-//Save infos of a user for inscription
-/*app.post('/signup', (req: any, res: any) => {
-  let user: User= new User(req.body.username,req.body.email,req.body.password)
-  dbUser.save(user, (err: Error | null) => {
-    if (err) throw err
-    res.status(200).send('saved')
-    console.log(user)
-    console.log('test')
-  })
-})
-*/
-/*
-app.post('/signup', (req: any, res: any, next: any) => {
-  
-    dbUser.save(req.body.username, (err: Error | null, result?: User) => {
-      if (err) next(err)
-      if (result === undefined || !result.validatePassword(req.body.password)) {
-        console.log(result)
-        console.log('test')
-        res.redirect('/signup')
-
-      } else {
-        console.log(result)
-        console.log('test')
-        req.session.loggedIn = true
-        req.session.user = result
-        res.redirect('/')
-      }
-    })
-  })
-  */
 app.use(authRouter);
 var userRouter = express.Router();
 userRouter.post('/', function (req, res, next) {
@@ -196,25 +165,15 @@ userRouter.post('/', function (req, res, next) {
         }
     });
 });
-//Get a user TEST 
-/*
-app.get('/users/:username', (req: any, res: any, next: any) => {
-  dbUser.get(req.params.username, function (err: Error | null, result?: User) {
-    if (err || result === undefined) {
-      res.status(404).send("user not found")
-    } else res.status(200).json(result)
-  })
-})
-*/
 //Add metrics page
-authRouter.get('/userpage/addmetrics', function (req, res) {
+authRouter.get('/addmetrics', function (req, res) {
     res.render('addmetrics');
 });
-//Add metrics page
-authRouter.get('/userpage/deletemetrics', function (req, res) {
+//delete metrics page
+authRouter.get('/deletemetrics', function (req, res) {
     res.render('deletemetrics');
 });
-//Add metrics page
+//bring metrics page
 authRouter.get('/userpage/metrics', function (req, res) {
     res.render('bringmetrics');
 });

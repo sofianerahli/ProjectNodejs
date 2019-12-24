@@ -8,7 +8,9 @@
     "start": "./node_modules/.bin/ts-node src/server.ts",
     "build": "./node_modules/.bin/tsc -p tsconfig.json",
     "dev": "./node_modules/.bin/nodemon ",
-    "populate": "./node_modules/.bin/ts-node bin/populate.ts"
+    "populate": "./node_modules/.bin/ts-node bin/populate.ts",
+    "coverage": "nyc ./node_modules/.bin/mocha --exit -r ts-node/register src/test/*",
+    "coveralls": "npm run coverage && nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",

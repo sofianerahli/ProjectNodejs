@@ -1,13 +1,9 @@
 
 import 'mocha'
-import express = require('express')
 import { LevelDB } from '../src/leveldb'
 import { User, UserHandler } from '../src/users'
 
-// const app = express()
-var chai = require('chai');
 var assert = require('assert');
-const expect= chai.expect
 const port: string = process.env.PORT || '8083'
 
 const dbPath: string = 'db_test'
@@ -76,17 +72,4 @@ describe('User', function() {
         
     });
 })
-
-/*
-describe('User', function() {
-    describe('#get()', function() {
-      it('should save an user without error', function() {
-        var a= new User('testusername','testemail','testpassword');
-        var ok= a.get()
-        assert.ok(dbUser.get('user:kudinov',function(err) {
-            if (err) throw(err);
-          }),"Ok")
-    });
-  });
-})*/
 

@@ -3,22 +3,19 @@ import WriteStream from 'level-ws'
 import { Stream } from 'stream'
 
 export class Metric {
-  public timestamp: string
-  public value: number
+  
+  public id : number
   public username : string
   public date : string
   public weight : number
 
-  constructor( username : string ,date : string,weight : number ) {
-    this.timestamp = 'toto'
-    this.value = 2
+  constructor( id : number ,username : string ,date : string,weight : number ) {
+    this.id = id
     this.username =username
     this.date = date
     this.weight = weight
   }
 
-
- 
 }
 
 export class MetricsHandler {
@@ -29,38 +26,41 @@ export class MetricsHandler {
     this.db = LevelDB.open(dbPath)
   }
   
+  
   public closeDB(){
     this.db.close();
   }
 
 
   public save( metrics: Metric, callback: (error: Error | null) => void) {  
-     this.db.put(`metric:${metrics.username}`,`${metrics.date},${metrics.weight}`,(err: Error | null) => {
+     this.db.put(`id:${metrics.id}`,`${metrics.username},${metrics.date},${metrics.weight}`,(err: Error | null) => {
       callback(err)
     })
   }
+  //`id:${metrics.id}`
     
 
   public getAll(username :string,  callback: (error: Error | null, result : Metric [] | null) => void) {
     let metrics : Metric[] = []
     let a=0
+    let i=0
     this.db.createReadStream()
     .on('data', function (data) {
       
       console.log(data.key, '=', data.value)
       console.log(data.value.split(','))
      // console.log(data.key.split(':'))
-      const name= data.key.split(':')[1];
-      console.log(name)
-      const date=data.value.split(',')[0];
-      const weight = data.value.split(',')[1];
+     const name = data.value.split(',')[0];
+      const date=data.value.split(',')[1];
+      const weight = data.value.split(',')[2];
       console.log(date)
       console.log(weight)
-      if(username===name){
-        a=1
-        let metric: Metric = new Metric(username,date,weight)
-        metrics.push(metric)
-      }
+      if(username === name ){
+      console.log('trouve')
+      let metric: Metric = new Metric(i,username,date,weight)
+      metrics.push(metric)
+    a=1}
+      i++
     })
     
     .on('error', function (err) {
@@ -105,35 +105,81 @@ export class MetricsHandler {
       console.log('Stream ended')
     })
   }
-
-  public delete(key : string,callback: (error: Error | null, data) => void) {
+  
+  
+  delete(key : string ) :Metric {
     let MetricFound= false
     let metrics : Metric[] = []
+    let a=0
+    let i=0
     this.db.createReadStream()
+   
     .on('data', function (data) {
-      if(key===data.key) {
-        MetricFound= true
-        const timestamp=data.key.split(':')[2]
-        const value = data.value
-        //callback(null,new Metric(timestamp, value))
-      }
-    })
+      
+      console.log(data.key, '=', data.value)
+      console.log(data.value.split(','))
+     // console.log(data.key.split(':'))
+     const id = data.key.split(':')[1];
+     const name = data.value.split(',')[0];
+      const date=data.value.split(',')[1];
+      const weight = data.value.split(',')[2];
+      console.log(id)
+      console.log(key)
+
+      if(id == key ){
+      console.log('la')
+      a=1
+      let metric: Metric = new Metric(id,name,date,weight)
+      metrics.push(metric)
+      console.log(metrics[0].id)
+      
     
-    .on('error', function (err) {
-      console.log('Oh my!', err)
-      callback(err,null)
-    })
-    .on('end', function () {
-      if(!MetricFound) callback(Error("Metric doesn't exist"), null)
-      console.log('Stream ended')
-    })
-    if(MetricFound){
-      this.db.del(key)
+     i++;
     }
+      
+    })
 
+    .on('end', function () {
+      
+      console.log('Stream ended')
+      console.log(metrics[0].id)
+      
+      
+      
+    })
+
+    return metrics[0];
+
+
+    /*
+    this.deleteOne(metrics[0],(err: Error | null) => {
+      if (err) throw err
+      console.log('oups')
+  })*/
+   
 
     
+
+    
+    /*
+    console.log('deletion zone')
+
+    if(a===1)
+    {
+      
+    this.db
   }
+    */
+    
+  
+  }
+  
+
+  public deleteOne(metrics: Metric,callback: (error: Error | null) => void) {  
+    this.db.del(`id:${metrics.id}`,`${metrics.username},${metrics.date},${metrics.weight}`,(err: Error | null) => {
+     callback(err)
+   })
+ }
 
   static get(callback: (error: Error | null, result?: Metric[]) => void) {
     const result = [
@@ -142,6 +188,7 @@ export class MetricsHandler {
     ]
     callback(null, result)
   }
+
   
 
   

@@ -2,9 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var leveldb_1 = require("./leveldb");
 var Metric = /** @class */ (function () {
-    function Metric(username, date, weight) {
-        this.timestamp = 'toto';
-        this.value = 2;
+    function Metric(id, username, date, weight) {
+        this.id = id;
         this.username = username;
         this.date = date;
         this.weight = weight;
@@ -20,29 +19,32 @@ var MetricsHandler = /** @class */ (function () {
         this.db.close();
     };
     MetricsHandler.prototype.save = function (metrics, callback) {
-        this.db.put("metric:" + metrics.username, metrics.date + "," + metrics.weight, function (err) {
+        this.db.put("id:" + metrics.id, metrics.username + "," + metrics.date + "," + metrics.weight, function (err) {
             callback(err);
         });
     };
+    //`id:${metrics.id}`
     MetricsHandler.prototype.getAll = function (username, callback) {
         var metrics = [];
         var a = 0;
+        var i = 0;
         this.db.createReadStream()
             .on('data', function (data) {
             console.log(data.key, '=', data.value);
             console.log(data.value.split(','));
             // console.log(data.key.split(':'))
-            var name = data.key.split(':')[1];
-            console.log(name);
-            var date = data.value.split(',')[0];
-            var weight = data.value.split(',')[1];
+            var name = data.value.split(',')[0];
+            var date = data.value.split(',')[1];
+            var weight = data.value.split(',')[2];
             console.log(date);
             console.log(weight);
             if (username === name) {
-                a = 1;
-                var metric = new Metric(username, date, weight);
+                console.log('trouve');
+                var metric = new Metric(i, username, date, weight);
                 metrics.push(metric);
+                a = 1;
             }
+            i++;
         })
             .on('error', function (err) {
             console.log('Oh my!', err);
@@ -83,30 +85,55 @@ var MetricsHandler = /** @class */ (function () {
             console.log('Stream ended');
         });
     };
-    MetricsHandler.prototype.delete = function (key, callback) {
+    MetricsHandler.prototype.delete = function (key) {
         var MetricFound = false;
         var metrics = [];
+        var a = 0;
+        var i = 0;
         this.db.createReadStream()
             .on('data', function (data) {
-            if (key === data.key) {
-                MetricFound = true;
-                var timestamp = data.key.split(':')[2];
-                var value = data.value;
-                //callback(null,new Metric(timestamp, value))
+            console.log(data.key, '=', data.value);
+            console.log(data.value.split(','));
+            // console.log(data.key.split(':'))
+            var id = data.key.split(':')[1];
+            var name = data.value.split(',')[0];
+            var date = data.value.split(',')[1];
+            var weight = data.value.split(',')[2];
+            console.log(id);
+            console.log(key);
+            if (id == key) {
+                console.log('la');
+                a = 1;
+                var metric = new Metric(id, name, date, weight);
+                metrics.push(metric);
+                console.log(metrics[0].id);
+                i++;
             }
         })
-            .on('error', function (err) {
-            console.log('Oh my!', err);
-            callback(err, null);
-        })
             .on('end', function () {
-            if (!MetricFound)
-                callback(Error("Metric doesn't exist"), null);
             console.log('Stream ended');
+            console.log(metrics[0].id);
         });
-        if (MetricFound) {
-            this.db.del(key);
-        }
+        return metrics[0];
+        /*
+        this.deleteOne(metrics[0],(err: Error | null) => {
+          if (err) throw err
+          console.log('oups')
+      })*/
+        /*
+        console.log('deletion zone')
+    
+        if(a===1)
+        {
+          
+        this.db
+      }
+        */
+    };
+    MetricsHandler.prototype.deleteOne = function (metrics, callback) {
+        this.db.del("id:" + metrics.id, metrics.username + "," + metrics.date + "," + metrics.weight, function (err) {
+            callback(err);
+        });
     };
     MetricsHandler.get = function (callback) {
         var result = [
